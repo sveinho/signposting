@@ -6,7 +6,7 @@
     "order": 1,
     "discipline": "Research",
     "tags": ["Data", "Structure"],
-    "abstract": "Choose a learning path to get started. Limit search by choosing one learning path, or include all."
+    "abstract": "Choose a learning path to get started. Limit search by choosing one learning path, or include all. ### Format Identification\n- **Byte Signature (Magic Bytes):** Starts with `%PDF-` (Hex: `25 50 44 46`).\n- **Structural Analysis:** Looks for a specific dictionary key `pdfaid:part` and `pdfaid:conformance` embedded inside the XMP metadata stream.\n- **Content Analysis:** Identified using tools like JHOVE or PRONOM (Siegfried/Droid) with PUID `fmt/354` (for PDF/A-1b)."
     },
   {
     "id": "data-management-researchers",
