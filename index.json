@@ -6,8 +6,8 @@
     "order": 1,
     "discipline": "Research",
     "tags": ["Data", "Structure"],
-    "abstract": "Choose a learning path to get started. Limit search by choosing one learning path, or include all. ### Format Identification\n- **Byte Signature (Magic Bytes):** Starts with `%PDF-` (Hex: `25 50 44 46`).\n- **Structural Analysis:** Looks for a specific dictionary key `pdfaid:part` and `pdfaid:conformance` embedded inside the XMP metadata stream.\n- **Content Analysis:** Identified using tools like JHOVE or PRONOM (Siegfried/Droid) with PUID `fmt/354` (for PDF/A-1b)."
-    },
+    "abstract": "First you will need to choose a learning path to get started. Choose the one that alignes best with your relevant role: reseracher, manager or trainer. The same topic will often be described within all three learning paths at the same time, and based on this: You should limit your serch or widening it to include the wanted learning paths. You will need to use three or more letters in a search. All modules are interactive and can be opened or closed according to your preference. Hopefully, this is enough information to navigate tis resource. Lets get started."
+  },
   {
     "id": "data-management-researchers",
     "title": "Module 1: Data Management for Researchers",
