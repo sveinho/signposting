@@ -223,6 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
       } else {
         expandedHTML = `<button class="read-more-btn">Start Learning Module →</button>`;
       }
+const displayAbstract = isSearching ? getHighlightedHTML(article.abstract || '', searchWords) : (article.abstract || '');
 
       return `
         <article class="filterable" data-id="${article.id}">
@@ -233,13 +234,12 @@ document.addEventListener('DOMContentLoaded', function() {
               ${tagsHTML}
             </div>
           </div>
-          <p class="abstract-text">${article.abstract || ''}</p>
+          <!-- ENDRET: Bruker nå displayAbstract i stedet for article.abstract -->
+          <p class="abstract-text">${displayAbstract}</p>
           ${expandedHTML}
         </article>
       `;
     }).join('');
-
-    attachArticleClickEvents();
 
     if (loadMoreWrapper) {
       if (filteredArticles.length > displayedCount) {
