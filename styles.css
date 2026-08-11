@@ -514,3 +514,9 @@ article.filterable:hover .read-more-btn {
 .modules-grid article.filterable:has(.full-content)[data-id*="-managers"] { border-left-color: var(--color-manager) !important; }
 .modules-grid article.filterable:has(.full-content)[data-id*="-trainers"] { border-left-color: var(--color-trainer) !important; }
 
+article.filterable h2,
+article.filterable p,
+article.filterable mark,
+article.filterable span {
+  pointer-events: none;
+}
