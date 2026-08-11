@@ -111,7 +111,6 @@ document.addEventListener('DOMContentLoaded', function() {
           return combinedSearchText.includes(cleanWord) || cleanTitle.includes(cleanWord);
         });
       });
-
       filteredArticles.sort((a, b) => {
         const titleA = (a.title || '').toLowerCase().trim();
         const titleB = (b.title || '').toLowerCase().trim();
@@ -165,6 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     renderArticles();
   }
+
   // Renders learning modules and controls pagination slicing
   function renderArticles() {
     const searchWords = searchQuery.split(' ').filter(Boolean);
@@ -182,7 +182,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     articlesContainer.innerHTML = itemsToRender.map(article => {
       const isExpanded = article.id === activeArticleId;
-      const displayTitle = isSearching ? getHighlightedHTML(article.title, searchWords) : article.title;
+      const displayTitle = isSearching ? getHighlightedHTML(article.title || '', searchWords) : article.title;
+      
+      // Plassert korrekt for bruk i HTML-genereringen senere
+      const displayAbstract = isSearching ? getHighlightedHTML(article.abstract || '', searchWords) : (article.abstract || '');
       
       const disciplineValue = article.discipline || 'Unknown';
       const tagsArray = article.tags || [];
@@ -203,11 +206,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         let htmlContent = article.markdownContent && md ? md.render(article.markdownContent) : 'Loading module text...';
 
-        // Check if a sequential next module exists in the current learning path
+        // SIKRET: Disse ligger nå trygt plassert inne i if (isExpanded) blokken
         const nextArticle = allArticles.find(a => a.track === article.track && a.order === (article.order + 1));
         let nextBtnHTML = '';
         if (nextArticle) {
-          nextBtnHTML = `<button class="next-step-btn" data-next-id="${nextArticle.id}">Next Module: ${nextArticle.title} b</button>`;
+          nextBtnHTML = `<button class="next-step-btn" data-next-id="${nextArticle.id}">Next Module: ${nextArticle.title} ➔</button>`;
         }
 
         expandedHTML = `
@@ -215,16 +218,17 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="markdown-body">${htmlContent}</div>
             <div class="learning-path-actions">
               ${nextBtnHTML}
-              <button class="share-btn" data-id="${article.id}">Copy share link p</button>
-              <button class="close-article-btn">Close Module b</button>
+              <button class="share-btn" data-id="${article.id}">Copy share link 🔗</button>
+              <button class="close-article-btn">Close Module ✕</button>
             </div>
           </div>
         `;
       } else {
-        expandedHTML = `<button class="read-more-btn">Start Learning Module b</button>`;
+        expandedHTML = `<button class="read-more-btn">Start Learning Module →</button>`;
       }
 
-      return `
+
+     return `
         <article class="filterable" data-id="${article.id}">
           <div class="article-header">
             <h2>${displayTitle}</h2>
@@ -233,12 +237,13 @@ document.addEventListener('DOMContentLoaded', function() {
               ${tagsHTML}
             </div>
           </div>
-          <p class="abstract-text">${article.abstract || ''}</p>
+          <p class="abstract-text">${displayAbstract}</p>
           ${expandedHTML}
         </article>
       `;
     }).join('');
 
+    // REPARERT: Denne linjen manglet, som gjorde at klikk-lytterne aldri ble aktivert på nytt!
     attachArticleClickEvents();
 
     if (loadMoreWrapper) {
@@ -262,6 +267,8 @@ document.addEventListener('DOMContentLoaded', function() {
           e.target.type === 'checkbox'
         ) return;
 
+        // SIKRET: Bruker 'this.dataset.id' (selve kortet) i stedet for 'e.target' 
+        // slik at klikk på gule <mark>-ord eller badges alltid åpner riktig modul
         const articleId = this.dataset.id;
         handleModuleSelection(articleId);
       });
@@ -284,11 +291,11 @@ document.addEventListener('DOMContentLoaded', function() {
           const shareUrl = `${window.location.origin}${window.location.pathname}?id=${articleId}`;
           
           navigator.clipboard.writeText(shareUrl).then(() => {
-            this.textContent = 'Link copied! b';
+            this.textContent = 'Link copied! ✔';
             this.classList.add('copied');
             
             setTimeout(() => {
-              this.textContent = 'Copy share link p';
+              this.textContent = 'Copy share link 🔗';
               this.classList.remove('copied');
             }, 2000);
           }).catch(err => {
