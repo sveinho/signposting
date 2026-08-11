@@ -5,7 +5,7 @@
     "track": "info",
     "order": 1,
     "discipline": "Information",
-    "tags": ["Data", "Structure"],
+    "tags": ["Structure"],
     "abstract": "First you will need to choose a learning path to get started. Choose the one that alignes best with your relevant role: reseracher, manager or trainer. The same topic will often be described within all three learning paths at the same time, and based on this: You should limit your serch or widening it to include the wanted learning paths. You will need to use three or more letters in a search. All modules are interactive and can be opened or closed according to your preference. Hopefully, this is enough information to navigate this resource. Lets get started."
   },
   {
@@ -14,7 +14,7 @@
     "track": "researchers",
     "order": 1,
     "discipline": "Researchers",
-    "tags": ["Data", "Structure"],
+    "tags": ["Structure"],
     "abstract": "Learn how to structure and document your raw research data to meet peer-review standards and open-science policies."
   },
   {
@@ -23,7 +23,7 @@
     "track": "researchers",
     "order": 2,
     "discipline": "Researchers",
-    "tags": ["FAIR", "Sharing"],
+    "tags": ["Sharing"],
     "abstract": "Learn how to make your research data findable, accessible, and compliant with open science mandates."
   },
   {
@@ -32,7 +32,7 @@
     "track": "researchers",
     "order": 3,
     "discipline": "Researchers",
-    "tags": ["Archiving", "DMP"],
+    "tags": ["DMP"],
     "abstract": "The final step focuses on archiving data securely for 10+ years and submitting your final DMP report."
   },
   {
@@ -41,7 +41,7 @@
     "track": "managers",
     "order": 1,
     "discipline": "Managers",
-    "tags": ["Governance", "Strategy"],
+    "tags": ["Strategy"],
     "abstract": "Learn how to manage data access, compliance risk, and team workflows strategically."
   },
   {
