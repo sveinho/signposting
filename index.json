@@ -57,7 +57,7 @@
   },
   {
     "id": "data-management-trainers",
-    "title": "Module 1: Teaching Data Management",
+    "title": "Teaching Data Management",
     "track": "trainers",
     "order": 1,
     "discipline": "Trainers Module #1",
@@ -65,7 +65,7 @@
   },
   {
     "id": "curriculum-trainers",
-    "title": "Module 2: Curriculum Design for Data Literacy",
+    "title": "Curriculum Design for Data Literacy",
     "track": "trainers",
     "order": 2,
     "discipline": "Trainers Module #2",
@@ -73,7 +73,7 @@
   },
   {
     "id": "evaluation-trainers",
-    "title": "Module 3: Measuring Training Impact",
+    "title": "Measuring Training Impact",
     "track": "trainers",
     "order": 3,
     "discipline": "Trainers Module #3",
