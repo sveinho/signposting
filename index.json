@@ -9,15 +9,15 @@
   },
   {
     "id": "data-management-researchers",
-    "title": "Module 1: Data Management for Researchers",
+    "title": "Data Management for Researchers",
     "track": "researchers",
     "order": 1,
     "discipline": "Researchers #1",
-    "abstract": "Learn how to structure and document your raw research data to meet peer-review standards and open-science policies."
+    "abstract": "Keywords: FAIR, CARE, XML - Learn how to structure and document your raw research data to meet peer-review standards and open-science policies."
   },
   {
     "id": "data-sharing-researchers",
-    "title": "Module 2: Open Science and Data Sharing",
+    "title": "Open Science and Data Sharing",
     "track": "researchers #2",
     "order": 2,
     "discipline": "Researchers",
@@ -25,7 +25,7 @@
   },
   {
     "id": "preservation-researchers",
-    "title": "Module 3: Long-Term Data Preservation",
+    "title": "Long-Term Data Preservation",
     "track": "researchers",
     "order": 3,
     "discipline": "Researchers #3",
@@ -33,7 +33,7 @@
   },
   {
     "id": "data-management-managers",
-    "title": "Module 1: Data Governance for Managers",
+    "title": "Data Governance for Managers",
     "track": "managers",
     "order": 1,
     "discipline": "Managers #1",
@@ -41,7 +41,7 @@
   },
   {
     "id": "security-managers",
-    "title": "Module 2: Risk Management and Data Security",
+    "title": "Risk Management and Data Security",
     "track": "managers",
     "order": 2,
     "discipline": "Managers #2",
@@ -49,7 +49,7 @@
   },
   {
     "id": "analytics-managers",
-    "title": "Module 3: Data-Driven Decision Making",
+    "title": "Data-Driven Decision Making",
     "track": "managers",
     "order": 3,
     "discipline": "Managers #3",
