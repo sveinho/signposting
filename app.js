@@ -224,7 +224,6 @@ document.addEventListener('DOMContentLoaded', function() {
         expandedHTML = `<button class="read-more-btn">Start Learning Module →</button>`;
       }
 const displayAbstract = isSearching ? getHighlightedHTML(article.abstract || '', searchWords) : (article.abstract || '');
-
       return `
         <article class="filterable" data-id="${article.id}">
           <div class="article-header">
@@ -234,12 +233,14 @@ const displayAbstract = isSearching ? getHighlightedHTML(article.abstract || '',
               ${tagsHTML}
             </div>
           </div>
-          <!-- ENDRET: Bruker nå displayAbstract i stedet for article.abstract -->
           <p class="abstract-text">${displayAbstract}</p>
           ${expandedHTML}
         </article>
       `;
     }).join('');
+
+    // REPARERT: Denne linjen manglet, som gjorde at klikk-lytterne aldri ble aktivert på nytt!
+    attachArticleClickEvents();
 
     if (loadMoreWrapper) {
       if (filteredArticles.length > displayedCount) {
@@ -262,6 +263,8 @@ const displayAbstract = isSearching ? getHighlightedHTML(article.abstract || '',
           e.target.type === 'checkbox'
         ) return;
 
+        // SIKRET: Bruker 'this.dataset.id' (selve kortet) i stedet for 'e.target' 
+        // slik at klikk på gule <mark>-ord eller badges alltid åpner riktig modul
         const articleId = this.dataset.id;
         handleModuleSelection(articleId);
       });
