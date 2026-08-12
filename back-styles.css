@@ -13,14 +13,14 @@
   --border-color: #e2e8f0;
   
   /* Role Specific Themes */
-  --color-researcher: #2f80ed;
-  --bg-researcher-badge: #e1f0ff;
+  --color-researcher: #ffffff;
+  --bg-researcher-badge: #F0447D;
   
-  --color-manager: #9b51e0;
-  --bg-manager-badge: #f3e8ff;
+  --color-manager: #ffffff;
+  --bg-manager-badge: #EDAC00;
   
-  --color-trainer: #f2994a;
-  --bg-trainer-badge: #fef4ea;
+  --color-trainer: #ffffff;
+  --bg-trainer-badge: #15949E;
 }
 
 * {
