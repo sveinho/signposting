@@ -50,7 +50,7 @@ body {
    2. HEADER & LAYOUT CONTAINERS
    ========================================================================== */
 .main-header {
-  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  background: linear-gradient(135deg, #0D2173 0%, #0D2173 100%);
   color: #ffffff;
   padding: 40px 20px;
   text-align: center;
@@ -193,7 +193,7 @@ article.filterable:hover {
   color: #4a5568;
 }
 
-/* --- THEME 1: Researchers (Blue) --- */
+/* --- THEME 1: Researchers --- */
 article.filterable[data-id*="-researchers"] {
   border-left-color: var(--color-researcher);
 }
@@ -202,7 +202,7 @@ article.filterable[data-id*="-researchers"] .discipline-badge {
   color: var(--color-researcher);
 }
 
-/* --- THEME 2: Managers (Purple) --- */
+/* --- THEME 2: Managers --- */
 article.filterable[data-id*="-managers"] {
   border-left-color: var(--color-manager);
 }
@@ -211,7 +211,7 @@ article.filterable[data-id*="-managers"] .discipline-badge {
   color: var(--color-manager);
 }
 
-/* --- THEME 3: Trainers (Orange) --- */
+/* --- THEME 3: Trainers --- */
 article.filterable[data-id*="-trainers"] {
   border-left-color: var(--color-trainer);
 }
