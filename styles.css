@@ -13,14 +13,14 @@
   --border-color: #e2e8f0;
   
   /* Role Specific Themes */
-  --color-researcher: #2f80ed;
-  --bg-researcher-badge: #e1f0ff;
+  --color-researcher: #ffffff;
+  --bg-researcher-badge: #F0447D;
   
-  --color-manager: #9b51e0;
-  --bg-manager-badge: #f3e8ff;
+  --color-manager: #ffffff;
+  --bg-manager-badge: #EDAC00;
   
-  --color-trainer: #f2994a;
-  --bg-trainer-badge: #fef4ea;
+  --color-trainer: #ffffff;
+  --bg-trainer-badge: #15949E;
 }
 
 * {
@@ -50,8 +50,8 @@ body {
    2. HEADER & LAYOUT CONTAINERS
    ========================================================================== */
 .main-header {
-  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-  color: #ffffff;
+  background: #FFFFFF;
+  color: #0D2173;
   padding: 40px 20px;
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
@@ -64,7 +64,7 @@ body {
 }
 
 .header-container p {
-  color: #a0aec0;
+  color: #666F7A;
   font-size: 1.1rem;
 }
 
@@ -193,7 +193,7 @@ article.filterable:hover {
   color: #4a5568;
 }
 
-/* --- THEME 1: Researchers (Blue) --- */
+/* --- THEME 1: Researchers --- */
 article.filterable[data-id*="-researchers"] {
   border-left-color: var(--color-researcher);
 }
@@ -202,7 +202,7 @@ article.filterable[data-id*="-researchers"] .discipline-badge {
   color: var(--color-researcher);
 }
 
-/* --- THEME 2: Managers (Purple) --- */
+/* --- THEME 2: Managers --- */
 article.filterable[data-id*="-managers"] {
   border-left-color: var(--color-manager);
 }
@@ -211,7 +211,7 @@ article.filterable[data-id*="-managers"] .discipline-badge {
   color: var(--color-manager);
 }
 
-/* --- THEME 3: Trainers (Orange) --- */
+/* --- THEME 3: Trainers --- */
 article.filterable[data-id*="-trainers"] {
   border-left-color: var(--color-trainer);
 }
@@ -483,10 +483,10 @@ article.filterable:hover .read-more-btn {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Spesifikke aktive farger for rollene hvis du ønsker farge når de er valgt */
-.filter-btn.btn-researcher.active { background-color: var(--color-researcher); border-color: var(--color-researcher); }
-.filter-btn.btn-manager.active { background-color: var(--color-manager); border-color: var(--color-manager); }
-.filter-btn.btn-trainer.active { background-color: var(--color-trainer); border-color: var(--color-trainer); }
+/* Spesifikke aktive farger for rollene hvis du C8nsker farge nC%r de er valgt */
+/* .filter-btn.btn-researcher.active { background-color: var(--color-researcher); border-color: var(--color-researcher); }
+/* .filter-btn.btn-manager.active { background-color: var(--color-manager); border-color: var(--color-manager); }
+/* .filter-btn.btn-trainer.active { background-color: var(--color-trainer); border-color: var(--color-trainer); }
 
 /* ==========================================================================
    9. DIMMING INACTIVE MODULES (FADE OUT EFFECT)
@@ -513,29 +513,3 @@ article.filterable:hover .read-more-btn {
 .modules-grid article.filterable:has(.full-content)[data-id*="-researchers"] { border-left-color: var(--color-researcher) !important; }
 .modules-grid article.filterable:has(.full-content)[data-id*="-managers"] { border-left-color: var(--color-manager) !important; }
 .modules-grid article.filterable:has(.full-content)[data-id*="-trainers"] { border-left-color: var(--color-trainer) !important; }
- .badge {
-   display: inline-block;
-   padding: 4px 10px;
-   font-size: 0.75rem;
-   font-weight: 600;
-   border-radius: 9999px;
-   text-transform: uppercase;
-   letter-spacing: 0.05em;
-   background-color: #edf2f7;
-   color: #4a5568;
- }
-+
-+/* Tag badges as buttons for accessibility */
-+.tag-badge {
-+  border: none;
-+  background: transparent;
-+  padding: 4px 8px;
-+  margin-left: 6px;
-+  cursor: pointer;
-+  font: inherit;
-+}
-+.tag-badge:focus {
-+  outline: 2px solid rgba(66,153,225,0.4);
-+}
-
- .modules-grid article.filterable:has(.full-content)[data-id*="-trainers"] { border-left-color: var(--color-trainer) !important; }
