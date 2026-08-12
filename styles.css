@@ -50,7 +50,7 @@ body {
    2. HEADER & LAYOUT CONTAINERS
    ========================================================================== */
 .main-header {
-  background: linear-gradient(135deg, #667485 0%, #47505C 100%);
+  background: #15949E;
   color: #ffffff;
   padding: 40px 20px;
   text-align: center;
