@@ -484,9 +484,9 @@ article.filterable:hover .read-more-btn {
 }
 
 /* Spesifikke aktive farger for rollene hvis du C8nsker farge nC%r de er valgt */
-.filter-btn.btn-researcher.active { background-color: var(--color-researcher); border-color: var(--color-researcher); }
-.filter-btn.btn-manager.active { background-color: var(--color-manager); border-color: var(--color-manager); }
-.filter-btn.btn-trainer.active { background-color: var(--color-trainer); border-color: var(--color-trainer); }
+/* .filter-btn.btn-researcher.active { background-color: var(--color-researcher); border-color: var(--color-researcher); }
+/* .filter-btn.btn-manager.active { background-color: var(--color-manager); border-color: var(--color-manager); }
+/* .filter-btn.btn-trainer.active { background-color: var(--color-trainer); border-color: var(--color-trainer); }
 
 /* ==========================================================================
    9. DIMMING INACTIVE MODULES (FADE OUT EFFECT)
