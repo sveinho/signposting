@@ -5,6 +5,8 @@ This solution will run on any web server.
 
 The use of Markdown-it is based on the original MIT License for the javascript:
 
+https://github.com/markdown-it/markdown-it?tab=MIT-1-ov-file 
+
 "Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.
 
 Permission is hereby granted, free of charge, to any person
