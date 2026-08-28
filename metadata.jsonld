@@ -1,4 +1,102 @@
 {
+  "@context": {
+    "dc": "http://purl.org/dc/terms/",
+    "dcat": "http://www.w3.org/ns/dcat#",
+    "dct": "http://purl.org/dc/terms/",
+    "dqv": "http://www.w3.org/ns/dqv#",
+    "foaf": "http://xmlns.com/foaf/0.1/",
+    "fsharing": "http://fairsharing.org/model/fairsharing_record_schema#",
+    "ldqd": "http://www.w3.org/2016/05/ldqd#",
+    "oa": "http://www.w3.org/ns/oa#",
+    "premis": "http://www.loc.gov/premis/rdf/v3/",
+    "prov": "http://www.w3.org/ns/prov#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "schema": "http://schema.org/",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "vcard": "http://www.w3.org/2006/vcard/ns#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@id": "https://github.com/sveinho/signposting/",
+  "@type": "dcat:CatalogRecord",
+  "dct:issued": "2026-08-28T11:58:57",
+  "foaf:primaryTopic": {
+    "@id": "https://github.com/sveinho/signposting/",
+    "@type": [
+      "dcat:Catalog",
+      "foaf:Project"
+    ],
+    "dcat:contactPoint": [
+      {
+        "@type": "vcard:Kind",
+        "vcard:hasEmail": "lars.nielson@cocern.ed"
+      },
+      {
+        "@type": "vcard:Kind",
+        "vcard:hasEmail": "jose.surname@concern.ed"
+      }
+    ],
+    "dcat:keyword": [
+      "Subject Agnostic"
+    ],
+    "dct:conformsTo": [
+      {
+        "@id": "https://github.com/sveinho/signposting/infrastructure/",
+        "@type": [
+          "dct:Policy",
+          "premis:PreservationPolicy"
+        ],
+        "dct:title": "TestWeb (20+ year minimum retention period)."
+      },
+      {
+        "@id": "https://github.com/sveinho/signposting/policies",
+        "@type": [
+          "dct:Policy",
+          "dct:accrualPolicy"
+        ]
+      },
+      {
+        "@id": "https://github.com/sveinho/signposting/",
+        "@type": [
+          "dct:Policy",
+          "fsharing:SustainabilityPolicy"
+        ],
+        "dct:title": "TestWeb Roadmap"
+      }
+    ],
+    "dct:description": "Testweb is a generalist research data repository built and funded through grants.",
+    "dct:identifier": [
+      "10.25504/FAIRsharing.wy4egf",
+      "https://www.re3data.org/repository/r3d100010468"
+    ],
+    "dct:publisher": [
+      {
+        "@type": "foaf:Agent",
+        "foaf:name": "OpenAIRE"
+      },
+      {
+        "@type": "foaf:Agent",
+        "foaf:name": "European Organisation for TestWeb"
+      }
+    ],
+    "dct:title": "Testweb",
+    "dct:type": "fairsharing:repository"
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
   "@context": "https://schema.org",
   "@type": "Dataset",
   "@id": "https://doi.org",
