@@ -20,12 +20,14 @@
   "@id": "https://github.com/sveinho/signposting/",
   "@type": "dcat:CatalogRecord",
   "dct:issued": "2026-08-28T11:58:57",
-  "foaf:primaryTopic": {
-    "@id": "https://github.com/sveinho/signposting/",
-    "@type": [
-      "dcat:Catalog",
-      "foaf:Project"
-    ],
+  "repositoryName": "ExampleArchive",
+  "description": "An example archive and repository",
+  "url": "https://example.com/articles/html-metadata",
+	"identifier" : "handledoi.org/2",
+	"language" : "EN"
+	"organisation" : "The Example Org",
+	"country" : "ExampleGeo",
+	"contactInformation" : "atmail"
     "dcat:contactPoint": [
       {
         "@type": "vcard:Kind",
