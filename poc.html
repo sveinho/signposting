@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>re3data v4 to DataCatalog JSON-LD Editor</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+    fieldset { margin-bottom: 1.5rem; border: 1px solid #ccc; border-radius: 6px; padding: 1rem; }
+    legend { font-weight: bold; padding: 0 0.5rem; }
+    label { display: block; margin-top: 0.75rem; font-weight: 600; font-size: 0.9rem; }
+    input, textarea { width: 100%; padding: 0.5rem; margin-top: 0.25rem; box-sizing: border-box; font-family: inherit; }
+    textarea { font-family: monospace; }
+    button { margin-top: 1rem; padding: 0.6rem 1.2rem; cursor: pointer; background: #0056b3; color: #fff; border: none; border-radius: 4px; }
+    button:hover { background: #004494; }
+    .row { display: flex; gap: 1rem; }
+    .row > div { flex: 1; }
+  </style>
+</head>
+<body>
+
+  <h1>re3data v4 &rarr; Schema.org <code>DataCatalog</code></h1>
+
+  <!-- STEP 1: HARVEST -->
+  <fieldset>
+    <legend>1. Harvest re3data v4 XML</legend>
+    <div class="row">
+      <div>
+        <label for="repoId">re3data Repository ID (e.g., r3d100010468)</label>
+        <input type="text" id="repoId" value="r3d100010468">
+      </div>
+      <div style="display:flex; align-items:flex-end;">
+        <button type="button" onclick="fetchFromApi()">Fetch from API</button>
+      </div>
+    </div>
+    <p id="fetchStatus" style="font-size: 0.85rem; color: #555;"></p>
+
+    <label for="xmlInput">Raw re3data v4 XML (Paste or edit directly if CORS blocks API)</label>
+    <textarea id="xmlInput" rows="8"><?xml version="1.0" encoding="utf-8"?>
+<r3d:re3data xmlns:r3d="http://re3data.org">
+  <r3d:repository>
+    <r3d:re3data.orgIdentifier>r3d100010468</r3d:re3data.orgIdentifier>
+    <r3d:repositoryName language="eng">Zenodo</r3d:repositoryName>
+    <r3d:repositoryURL>https://zenodo.org</r3d:repositoryURL>
+    <r3d:description language="eng">General-purpose open-access repository developed under the European OpenAIRE program and operated by CERN.</r3d:description>
+    <r3d:keyword>multidisciplinary</r3d:keyword>
+    <r3d:keyword>open science</r3d:keyword>
+    <r3d:institution>
+      <r3d:institutionName language="eng">CERN</r3d:institutionName>
+      <r3d:institutionURL>https://home.cern</r3d:institutionURL>
+    </r3d:institution>
+    <r3d:dataLicense>
+      <r3d:dataLicenseName>CC</r3d:dataLicenseName>
+      <r3d:dataLicenseURL>https://creativecommons.org</r3d:dataLicenseURL>
+    </r3d:dataLicense>
+  </r3d:repository>
+</r3d:re3data></textarea>
+    <button type="button" onclick="parseXmlToForm()">Parse XML into Editor</button>
+  </fieldset>
+
+  <!-- STEP 2: EDIT & SUPPLEMENT -->
+  <fieldset>
+    <legend>2. Edit Harvested Metadata &amp; Supplement</legend>
+    <div class="row">
+      <div>
+        <label for="catId">Identifier (@id / URI)</label>
+        <input type="text" id="catId">
+      </div>
+      <div>
+        <label for="catName">Catalog Name (name)</label>
+        <input type="text" id="catName">
+      </div>
+    </div>
+
+    <label for="catUrl">Repository URL (url)</label>
+    <input type="url" id="catUrl">
+
+    <label for="catDesc">Description (description)</label>
+    <textarea id="catDesc" rows="3"></textarea>
+
+    <label for="catKeywords">Keywords (comma-separated)</label>
+    <input type="text" id="catKeywords">
+
+    <div class="row">
+      <div>
+        <label for="providerName">Provider / Institution Name (provider.name)</label>
+        <input type="text" id="providerName">
+      </div>
+      <div>
+        <label for="providerUrl">Provider URL (provider.url)</label>
+        <input type="url" id="providerUrl">
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="catLicense">Default Data License URL (license)</label>
+        <input type="url" id="catLicense">
+      </div>
+      <div>
+        <label for="catLang">Supplement: Primary Language (inLanguage)</label>
+        <input type="text" id="catLang" placeholder="e.g., en, no, de" value="en">
+      </div>
+    </div>
+
+    <label for="catFunder">Supplement: Funder Name (funder.name - optional)</label>
+    <input type="text" id="catFunder" placeholder="e.g., European Commission">
+
+    <button type="button" onclick="generateJsonLd()">Generate &amp; Embed JSON-LD</button>
+  </fieldset>
+
+  <!-- STEP 3: GENERATE & EMBED -->
+  <fieldset>
+    <legend>3. Generated HTML-Embedded JSON-LD</legend>
+    <p style="font-size: 0.85rem; color: #555;">This script block is also dynamically injected into this page's <code>&lt;head&gt;</code>.</p>
+    <textarea id="jsonLdOutput" rows="16" readonly></textarea>
+  </fieldset>
+
+  <script>
+    // Helper to safely extract text regardless of XML namespace prefix differences
+    function getXmlText(parent, localName) {
+      if (!parent) return "";
+      const el = parent.getElementsByTagNameNS("*", localName)[0];
+      return el ? el.textContent.trim() : "";
+    }
+
+    // 1. Harvest via Fetch API
+    async function fetchFromApi() {
+      const id = document.getElementById("repoId").value.trim();
+      const status = document.getElementById("fetchStatus");
+      if (!id) return;
+
+      status.textContent = "Fetching from re3data API...";
+      try {
+        // Note: re3data API v1/beta/v4 endpoints may enforce CORS in browser contexts
+        const response = await fetch(`https://re3data.org{id}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const xmlText = await response.text();
+        document.getElementById("xmlInput").value = xmlText;
+        status.textContent = "Harvested successfully. Parsing into form...";
+        parseXmlToForm();
+      } catch (err) {
+        status.textContent = `Direct browser fetch blocked or failed (${err.message}). Use a CORS proxy or paste XML below.`;
+      }
+    }
+
+    // 2. Parse XML into Form Fields
+    function parseXmlToForm() {
+      const xmlString = document.getElementById("xmlInput").value;
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+
+      const parseError = xmlDoc.querySelector("parsererror");
+      if (parseError) {
+        alert("Invalid XML format.");
+        return;
+      }
+
+      const repoNode = xmlDoc.getElementsByTagNameNS("*", "repository")[0] || xmlDoc;
+
+      const r3dId = getXmlText(repoNode, "re3data.orgIdentifier");
+      document.getElementById("catId").value = r3dId ? `https://doi.org{r3dId}` : "";
+      document.getElementById("catName").value = getXmlText(repoNode, "repositoryName");
+      document.getElementById("catUrl").value = getXmlText(repoNode, "repositoryURL");
+      document.getElementById("catDesc").value = getXmlText(repoNode, "description");
+
+      // Collect multiple keywords
+      const keywordNodes = Array.from(repoNode.getElementsByTagNameNS("*", "keyword"));
+      document.getElementById("catKeywords").value = keywordNodes.map(n => n.textContent.trim()).join(", ");
+
+      // First institution as primary provider
+      const instNode = repoNode.getElementsByTagNameNS("*", "institution")[0];
+      document.getElementById("providerName").value = getXmlText(instNode, "institutionName");
+      document.getElementById("providerUrl").value = getXmlText(instNode, "institutionURL");
+
+      // License URL
+      const licenseNode = repoNode.getElementsByTagNameNS("*", "dataLicense")[0];
+      document.getElementById("catLicense").value = getXmlText(licenseNode, "dataLicenseURL");
+
+      generateJsonLd();
+    }
+
+    // 3. Build JSON-LD and Embed into <head>
+    function generateJsonLd() {
+      const keywordsRaw = document.getElementById("catKeywords").value;
+      const keywordsArr = keywordsRaw
+        .split(",")
+        .map(k => k.trim())
+        .filter(k => k.length > 0);
+
+      const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "DataCatalog",
+        "@id": document.getElementById("catId").value || undefined,
+        "name": document.getElementById("catName").value,
+        "url": document.getElementById("catUrl").value,
+        "description": document.getElementById("catDesc").value,
+        "keywords": keywordsArr.length ? keywordsArr : undefined,
+        "license": document.getElementById("catLicense").value || undefined,
+        "inLanguage": document.getElementById("catLang").value || undefined,
+        "dateModified": new Date().toISOString().split("T")[0]
+      };
+
+      const providerName = document.getElementById("providerName").value;
+      if (providerName) {
+        jsonLd.provider = {
+          "@type": "Organization",
+          "name": providerName,
+          "url": document.getElementById("providerUrl").value || undefined
+        };
+      }
+
+      const funderName = document.getElementById("catFunder").value;
+      if (funderName) {
+        jsonLd.funder = {
+          "@type": "Organization",
+          "name": funderName
+        };
+      }
+
+      // Clean undefined keys via JSON serialization
+      const formattedJson = JSON.stringify(jsonLd, null, 2);
+      const embedSnippet = `<script type="application/ld+json">\n${formattedJson}\n<\/script>`;
+
+      // Display copy-pasteable HTML snippet
+      document.getElementById("jsonLdOutput").value = embedSnippet;
+
+      // Live-embed into current document <head>
+      let existingTag = document.getElementById("dynamic-datacatalog-jsonld");
+      if (!existingTag) {
+        existingTag = document.createElement("script");
+        existingTag.id = "dynamic-datacatalog-jsonld";
+        existingTag.type = "application/ld+json";
+        document.head.appendChild(existingTag);
+      }
+      existingTag.textContent = formattedJson;
+    }
+
+    // Initialize form with sample XML on load
+    window.addEventListener("DOMContentLoaded", parseXmlToForm);
+  </script>
+</body>
+</html>
