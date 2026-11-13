@@ -552,8 +552,8 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
           "value": r3dId,
           "url": `https://www.re3data.org/repository/${r3dId}`
         } : undefined,
-        "name": document.getElementById("dcterms:title").value.trim(),
-        "url": document.getElementById("catUrl").value.trim(),
+        "repositoryName": document.getElementById("dcterms:title").value.trim(),
+        "url": document.getElementById("dcat:accessService").value.trim(),
         "description": document.getElementById("catDesc").value.trim(),
         "datePublished": document.getElementById("catDatePublished").value || undefined,
         "dateModified": document.getElementById("catDateModified").value || undefined,
