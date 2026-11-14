@@ -16,8 +16,13 @@
     button:hover { background: #004494; }
     button.secondary { background: #2e7d32; margin-left: 0.5rem; }
     button.secondary:hover { background: #1b5e20; }
+    .small { padding: 0.45rem 0.8rem; font-size: 0.85rem; }
     .row { display: flex; gap: 1rem; }
     .row > div { flex: 1; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+    .status { font-size: 0.85rem; color: #2e7d32; min-height: 1.2rem; font-weight: 600; }
+    .hidden { display: none !important; }
+    .muted { color: #555; font-size: 0.8rem; }
     @media (max-width: 700px) { .row { flex-direction: column; gap: 0; } }
   </style>
 </head>
@@ -26,17 +31,34 @@
   <h1>POC of Copy, edit, paste when going from re3data v4 metadata to landing page embedded JSON-LD</h1>
   <p>Repository managers must a) find the re3 identifier for their own repository, like re3data example file: <code>r3d100000001</code> and b) use their browser to 
   visit the API address adding only the number of the record, like: <code>https://www.re3data.org/api/v40/repository/100000001</code>. 
-  <strong>STEP 1)</strong> Copy the XML source from the browser (right-click and view source before copying the full XML) and paste it below. 
+  <strong>STEP 1)</strong> Copy the XML source from the browser (right-click and view source before copying the full XML) and paste it below, or choose a saved JSON-LD/last session to continue. 
   <strong>STEP 2)</strong> Parse XML into the editor and edit or supplement fields. 
-  <strong>STEP 3)</strong> Copy and verify the generated JSON-LD.</p> 
- 
+  <strong>STEP 3)</strong> Copy and verify the generated JSON-LD.</p>
+
+  <fieldset>
+    <legend>0. Start from XML, parsed JSON-LD, or your last saved session</legend>
+    <div class="toolbar">
+      <button type="button" class="secondary small" onclick="showXmlPanel()">Use XML input</button>
+      <button type="button" class="secondary small" onclick="showJsonPastePanel()">Paste JSON-LD</button>
+      <button type="button" class="secondary small" onclick="restoreSavedSession()">Restore last saved version</button>
+      <button type="button" class="small" onclick="document.getElementById('jsonLdFileInput').click()">Open saved JSON-LD file</button>
+      <button type="button" class="small" onclick="clearSavedSession()">Clear saved version</button>
+    </div>
+    <input type="file" id="jsonLdFileInput" accept=".json,.jsonld,application/json" class="hidden">
+    <textarea id="jsonLdPasteInput" rows="8" class="hidden" placeholder="Paste JSON-LD directly here, or a script element with type=application/ld+json"></textarea>
+    <div class="toolbar">
+      <button type="button" onclick="loadJsonLdFromPaste()">Load pasted JSON-LD</button>
+    </div>
+    <div id="inputStatus" class="status" aria-live="polite"></div>
+  </fieldset>
+
   <!-- STEP 1: PASTE XML -->
- <fieldset>
+  <fieldset id="xmlInputPanel">
     <legend>1. Paste Raw re3data v4.0 XML</legend>
     <label for="xmlInput">Paste the Raw re3data v4 XML here - replace the example:</label>
     <textarea id="xmlInput" rows="14"><?xml version="1.0" encoding="utf-8"?>
 <!-- re3data.org Metadata Schema for the Description of Research Data Repositories. Version 4.0, August 2023. https://doi.org/10.48440/re3.014 -->
-<r3d:re3data xmlns:r3d="http://www.re3data.org/schema/4-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.re3data.org/schema/4-0 http://schema.re3data.org/4-0/re3dataV4-0.xsd">
+<r3d:re3data xmlns:r3d="http://www.re3data.org/schema/4-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.re3data.org/schema/4-0 http://schema.re3data.org/4-0/re3[...]
 	<r3d:repository>
 		<r3d:identifiers>
 			<r3d:re3data>r3d100000001</r3d:re3data>
@@ -44,8 +66,8 @@
 		</r3d:identifiers>
 		<r3d:repositoryName language="eng">Odum Institute Archive Dataverse</r3d:repositoryName>
 				<r3d:repositoryUrl>https://dataverse.unc.edu/dataverse/odum</r3d:repositoryUrl>
-				<r3d:description language="eng">The Odum Institute Archive Dataverse contains social science data curated and archived by the Odum Institute Data Archive at the University of North Carolina at Chapel Hill. Some key collections include the primary holdings of the Louis Harris Data Center, the National Network of State Polls, and other Southern-focused public opinion data.
-Please note that some datasets in this collection are restricted to University of North Carolina at Chapel Hill affiliates. Access to these datasets require UNC ONYEN institutional login to the Dataverse system.</r3d:description>
+				<r3d:description language="eng">The Odum Institute Archive Dataverse contains social science data curated and archived by the Odum Institute Data Archive at the University of North Carolina at Cha[...]
+Please note that some datasets in this collection are restricted to University of North Carolina at Chapel Hill affiliates. Access to these datasets require UNC ONYEN institutional login to the Datave[...]
 				<r3d:repositoryContact>
 			<r3d:repositoryContactInformation>https://uncch-rdmc.atlassian.net/servicedesk/customer/portal/4</r3d:repositoryContactInformation>
 			<r3d:repositoryContactType>administrative</r3d:repositoryContactType>
@@ -54,123 +76,123 @@ Please note that some datasets in this collection are restricted to University o
 			<r3d:repositoryContactInformation>odumarchive@unc.edu</r3d:repositoryContactInformation>
 			<r3d:repositoryContactType>administrative</r3d:repositoryContactType>
 		</r3d:repositoryContact>
-						<r3d:type>disciplinary</r3d:type>
-						<r3d:size>13 dataverses, 3.381 datasets, 25.713 files</r3d:size>
-													<r3d:repositoryLanguage>eng</r3d:repositoryLanguage>
+							<r3d:type>disciplinary</r3d:type>
+															<r3d:size>13 dataverses, 3.381 datasets, 25.713 files</r3d:size>
+																			<r3d:repositoryLanguage>eng</r3d:repositoryLanguage>
 							<r3d:subject subjectScheme="DFG">
 				<r3d:subjectId>124</r3d:subjectId>
 				<r3d:subjectName>Economics</r3d:subjectName>
 			</r3d:subject>
-					<r3d:subject subjectScheme="DFG">
+				<r3d:subject subjectScheme="DFG">
 				<r3d:subjectId>1</r3d:subjectId>
 				<r3d:subjectName>Humanities and Social Sciences</r3d:subjectName>
 			</r3d:subject>
-					<r3d:subject subjectScheme="DFG">
+				<r3d:subject subjectScheme="DFG">
 				<r3d:subjectId>12304</r3d:subjectId>
 				<r3d:subjectName>Political Science</r3d:subjectName>
 			</r3d:subject>
-					<r3d:subject subjectScheme="DFG">
+				<r3d:subject subjectScheme="DFG">
 				<r3d:subjectId>123</r3d:subjectId>
 				<r3d:subjectName>Social Sciences</r3d:subjectName>
 			</r3d:subject>
-					<r3d:subject subjectScheme="DFG">
+				<r3d:subject subjectScheme="DFG">
 				<r3d:subjectId>12</r3d:subjectId>
 				<r3d:subjectName>Social and Behavioural Sciences</r3d:subjectName>
 			</r3d:subject>
-							<r3d:missionStatementUrl>https://odum.unc.edu/archive/</r3d:missionStatementUrl>
-							<r3d:contentType contentTypeScheme="COAR">
+									<r3d:missionStatementUrl>https://odum.unc.edu/archive/</r3d:missionStatementUrl>
+									<r3d:contentType contentTypeScheme="COAR">
 				<r3d:contentTypeId>http://purl.org/coar/resource_type/c_ddb1</r3d:contentTypeId>
 				<r3d:contentTypeName>dataset</r3d:contentTypeName>
 			</r3d:contentType>
-					<r3d:contentType contentTypeScheme="COAR">
+				<r3d:contentType contentTypeScheme="COAR">
 				<r3d:contentTypeId>http://purl.org/coar/resource_type/c_18cf</r3d:contentTypeId>
 				<r3d:contentTypeName>text</r3d:contentTypeName>
 			</r3d:contentType>
-							<r3d:providerType>dataProvider</r3d:providerType>
-							<r3d:keyword>FAIR</r3d:keyword>
-					<r3d:keyword>Middle East</r3d:keyword>
-					<r3d:keyword>crime</r3d:keyword>
-					<r3d:keyword>demography</r3d:keyword>
-					<r3d:keyword>economy</r3d:keyword>
-					<r3d:keyword>education</r3d:keyword>
-					<r3d:keyword>election</r3d:keyword>
-					<r3d:keyword>environment</r3d:keyword>
-					<r3d:keyword>finance</r3d:keyword>
-					<r3d:keyword>health care</r3d:keyword>
-					<r3d:keyword>presidents United States</r3d:keyword>
-					<r3d:keyword>taxes</r3d:keyword>
-							<r3d:institution>
+									<r3d:providerType>dataProvider</r3d:providerType>
+									<r3d:keyword>FAIR</r3d:keyword>
+				<r3d:keyword>Middle East</r3d:keyword>
+				<r3d:keyword>crime</r3d:keyword>
+				<r3d:keyword>demography</r3d:keyword>
+				<r3d:keyword>economy</r3d:keyword>
+				<r3d:keyword>education</r3d:keyword>
+				<r3d:keyword>election</r3d:keyword>
+				<r3d:keyword>environment</r3d:keyword>
+				<r3d:keyword>finance</r3d:keyword>
+				<r3d:keyword>health care</r3d:keyword>
+				<r3d:keyword>presidents United States</r3d:keyword>
+				<r3d:keyword>taxes</r3d:keyword>
+									<r3d:institution>
 				<r3d:institutionName language="eng">Odum Institute for Research in Social Science</r3d:institutionName>
-								<r3d:institutionCountry>USA</r3d:institutionCountry>
-									<r3d:responsibilityType>general</r3d:responsibilityType>
-								<r3d:institutionType>non-profit</r3d:institutionType>
+										<r3d:institutionCountry>USA</r3d:institutionCountry>
+											<r3d:responsibilityType>general</r3d:responsibilityType>
+										<r3d:institutionType>non-profit</r3d:institutionType>
 				<r3d:institutionUrl>https://odum.unc.edu/archive/</r3d:institutionUrl>
-															</r3d:institution>
-					<r3d:institution>
+																	</r3d:institution>
+				<r3d:institution>
 				<r3d:institutionName language="eng">University of North Carolina at Chapel Hill</r3d:institutionName>
 									<r3d:institutionAdditionalName language="eng">UNC</r3d:institutionAdditionalName>
-								<r3d:institutionCountry>USA</r3d:institutionCountry>
-									<r3d:responsibilityType>general</r3d:responsibilityType>
-								<r3d:institutionType>non-profit</r3d:institutionType>
+										<r3d:institutionCountry>USA</r3d:institutionCountry>
+											<r3d:responsibilityType>general</r3d:responsibilityType>
+										<r3d:institutionType>non-profit</r3d:institutionType>
 				<r3d:institutionUrl>https://www.unc.edu</r3d:institutionUrl>
-									<r3d:institutionIdentifier>
-						<r3d:institutionIdentifierType>ROR</r3d:institutionIdentifierType>
-											<r3d:institutionIdentifierUrl>https://ror.org/0130frc33</r3d:institutionIdentifierUrl>
-										</r3d:institutionIdentifier>
-															</r3d:institution>
-							<r3d:policy>
+										<r3d:institutionIdentifier>
+											<r3d:institutionIdentifierType>ROR</r3d:institutionIdentifierType>
+																			<r3d:institutionIdentifierUrl>https://ror.org/0130frc33</r3d:institutionIdentifierUrl>
+											</r3d:institutionIdentifier>
+																</r3d:institution>
+									<r3d:policy>
 				<r3d:policyName>Collection Development Policy</r3d:policyName>
 				<r3d:policyUrl>https://odum.unc.edu/wp-content/uploads/sites/1060/2020/01/Policy_CollectionDevelopment_20170501.pdf</r3d:policyUrl>
 			</r3d:policy>
-					<r3d:policy>
+				<r3d:policy>
 				<r3d:policyName>Metadata Guidelines</r3d:policyName>
 				<r3d:policyUrl>https://odum.unc.edu/wp-content/uploads/sites/1060/2020/01/Guidelines_Metadata_20170501.pdf</r3d:policyUrl>
 			</r3d:policy>
 						<r3d:databaseAccess>
 			<r3d:databaseAccessType>open</r3d:databaseAccessType>
 					</r3d:databaseAccess>
-					<r3d:databaseLicense>
+				<r3d:databaseLicense>
 				<r3d:databaseLicenseName>CC0</r3d:databaseLicenseName>
 				<r3d:databaseLicenseUrl>https://creativecommons.org/share-your-work/public-domain/cc0</r3d:databaseLicenseUrl>
 			</r3d:databaseLicense>
-							<r3d:dataAccess>
+						<r3d:dataAccess>
 				<r3d:dataAccessType>embargoed</r3d:dataAccessType>
-							</r3d:dataAccess>
-					<r3d:dataAccess>
+						</r3d:dataAccess>
+				<r3d:dataAccess>
 				<r3d:dataAccessType>open</r3d:dataAccessType>
-							</r3d:dataAccess>
-					<r3d:dataAccess>
+						</r3d:dataAccess>
+				<r3d:dataAccess>
 				<r3d:dataAccessType>restricted</r3d:dataAccessType>
 									<r3d:dataAccessRestriction>institutional membership</r3d:dataAccessRestriction>
-							</r3d:dataAccess>
-							<r3d:dataLicense>
+						</r3d:dataAccess>
+						<r3d:dataLicense>
 				<r3d:dataLicenseName>CC</r3d:dataLicenseName>
 				<r3d:dataLicenseUrl>https://creativecommons.org/share-your-work/public-domain/cc0</r3d:dataLicenseUrl>
 			</r3d:dataLicense>
-					<r3d:dataLicense>
+				<r3d:dataLicense>
 				<r3d:dataLicenseName>CC0</r3d:dataLicenseName>
 				<r3d:dataLicenseUrl>https://creativecommons.org/share-your-work/public-domain/cc0</r3d:dataLicenseUrl>
 			</r3d:dataLicense>
-							<r3d:dataUpload>
+						<r3d:dataUpload>
 				<r3d:dataUploadType>restricted</r3d:dataUploadType>
 									<r3d:dataUploadRestriction>institutional membership</r3d:dataUploadRestriction>
-							</r3d:dataUpload>
+						</r3d:dataUpload>
 									<r3d:software>Dataverse</r3d:software>
 									<r3d:api>
 				<r3d:apiType>OAI-PMH</r3d:apiType>
 				<r3d:apiUrl>https://dataverse.unc.edu/oai?verb=Identify</r3d:apiUrl>
 									<r3d:apiDocumentation>https://guides.dataverse.org/en/latest/admin/discoverability.html</r3d:apiDocumentation>
-							</r3d:api>
-							<r3d:pidSystem>DOI</r3d:pidSystem>
-																							<r3d:metadataStandard>
+			</r3d:api>
+						<r3d:pidSystem>DOI</r3d:pidSystem>
+																			<r3d:metadataStandard>
 				<r3d:metadataStandardName>DDI (Data Documentation Initiative)</r3d:metadataStandardName>
 				<r3d:metadataStandardUrl>https://rdamsc.bath.ac.uk/msc/m13</r3d:metadataStandardUrl>
 			</r3d:metadataStandard>
-					<r3d:metadataStandard>
+				<r3d:metadataStandard>
 				<r3d:metadataStandardName>DataCite Metadata Schema</r3d:metadataStandardName>
 				<r3d:metadataStandardUrl>https://rdamsc.bath.ac.uk/msc/m11</r3d:metadataStandardUrl>
 			</r3d:metadataStandard>
-					<r3d:metadataStandard>
+				<r3d:metadataStandard>
 				<r3d:metadataStandardName>Dublin Core</r3d:metadataStandardName>
 				<r3d:metadataStandardUrl>https://rdamsc.bath.ac.uk/msc/m15</r3d:metadataStandardUrl>
 			</r3d:metadataStandard>
@@ -315,6 +337,264 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
   </fieldset>
 
   <script>
+    const STORAGE_KEY = "re3data2jsonld.savedState";
+
+    function showXmlPanel() {
+      document.getElementById("xmlInputPanel").classList.remove("hidden");
+      document.getElementById("jsonLdPasteInput").classList.add("hidden");
+      setInputStatus("XML input visible.");
+    }
+
+    function showJsonPastePanel() {
+      document.getElementById("xmlInputPanel").classList.add("hidden");
+      document.getElementById("jsonLdPasteInput").classList.remove("hidden");
+      setInputStatus("Paste JSON-LD and click \"Load pasted JSON-LD\".");
+    }
+
+    function setInputStatus(message) {
+      const el = document.getElementById("inputStatus");
+      if (el) el.textContent = message;
+    }
+
+    function saveFormState() {
+      const state = {};
+      const fields = document.querySelectorAll("#editorForm input, #editorForm textarea");
+      fields.forEach(field => {
+        state[field.id] = field.value;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function clearSavedSession() {
+      localStorage.removeItem(STORAGE_KEY);
+      setInputStatus("Saved version cleared.");
+    }
+
+    function restoreSavedSession() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        setInputStatus("No saved version found in this browser.");
+        return false;
+      }
+      try {
+        const state = JSON.parse(raw);
+        Object.entries(state).forEach(([id, value]) => {
+          const el = document.getElementById(id);
+          if (el) el.value = value || "";
+        });
+        generateJsonLd();
+        setInputStatus("Last saved version restored.");
+        return true;
+      } catch (err) {
+        setInputStatus("Saved version could not be restored.");
+        return false;
+      }
+    }
+
+    function getJsonLdFromText(rawText) {
+      const text = (rawText || "").trim();
+      if (!text) {
+        throw new Error("No JSON-LD content found.");
+      }
+
+      const scriptMatch = text.match(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/i);
+      const jsonText = scriptMatch ? scriptMatch[1] : text;
+      const cleaned = jsonText.trim();
+      if (!cleaned) {
+        throw new Error("No JSON-LD content found.");
+      }
+
+      try {
+        return JSON.parse(cleaned);
+      } catch (err) {
+        const candidate = cleaned.replace(/^.*?\{/, "{").replace(/\}.*$/, "}");
+        if (!candidate.startsWith("{")) {
+          throw new Error("The pasted content is not valid JSON-LD.");
+        }
+        return JSON.parse(candidate);
+      }
+    }
+
+    function asArray(value) {
+      if (Array.isArray(value)) return value;
+      if (value === undefined || value === null) return [];
+      return [value];
+    }
+
+    function joinCsv(values) {
+      return asArray(values)
+        .map(item => {
+          if (typeof item === "string") return item.trim();
+          if (item && typeof item === "object") {
+            return item.name || item.value || item.url || item['@id'] || "";
+          }
+          return "";
+        })
+        .filter(Boolean)
+        .join(", ");
+    }
+
+    function populateFormFromJsonLd(data) {
+      const catalog = Array.isArray(data) ? data[0] : data;
+      const root = catalog && catalog['@graph'] ? catalog['@graph'][0] : catalog;
+      if (!root || typeof root !== "object") {
+        throw new Error("JSON-LD could not be read as a DataCatalog object.");
+      }
+
+      const setValue = (id, value) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.value = value === undefined || value === null ? "" : String(value).trim();
+      };
+
+      const parseProvider = (obj) => {
+        const name = obj && obj.name ? obj.name : "";
+        const url = obj && obj.url ? obj.url : "";
+        let country = "";
+        if (obj && obj.address && obj.address.addressCountry) country = obj.address.addressCountry;
+        let rawId = obj && obj.identifier ? obj.identifier : "";
+        if (typeof rawId === "object" && rawId) rawId = rawId.value || rawId.url || "";
+        if (obj && obj.sameAs && /^https:\/\/ror\.org\//i.test(obj.sameAs)) {
+          rawId = `ROR:${obj.sameAs.replace(/^https:\/\/ror\.org\//i, "")}`;
+        }
+        const resp = obj && obj.additionalType ? obj.additionalType : "";
+        return [name, url, country, rawId, resp].join(" | ");
+      };
+
+      setValue("catId", root['@id'] || "");
+
+      const identifierObj = root.identifier;
+      const identifierValue = typeof identifierObj === "object" && identifierObj !== null
+        ? (identifierObj.value || identifierObj.url || "")
+        : (identifierObj || "");
+      setValue("r3dIdentifier", identifierValue.replace(/^https?:\/\/www\.re3data\.org\/repository\//, "").replace(/^https?:\/\/www\.re3data\.org\//, ""));
+
+      setValue("catName", root.name || "");
+      setValue("catUrl", root.url || "");
+      setValue("catDesc", root.description || "");
+      setValue("catDatePublished", root.datePublished || "");
+      setValue("catDateModified", root.dateModified || "");
+      setValue("catLang", Array.isArray(root.inLanguage) ? root.inLanguage.join(", ") : (root.inLanguage || ""));
+
+      const aboutLines = asArray(root.about).map(item => { 
+        const obj = item && typeof item === "object" ? item : { name: item };
+        const scheme = obj.inDefinedTermSet || obj['inDefinedTermSet'] || "";
+        const name = obj.name || obj['@id'] || "";
+        return scheme && name ? `${scheme} | ${name}` : name;
+      }).filter(Boolean);
+      setValue("catSubjects", aboutLines.join("\n"));
+
+      setValue("catKeywords", asArray(root.keywords).map(v => typeof v === "string" ? v : (v && v.name) || "").filter(Boolean).join(", "));
+      setValue("catContentTypes", asArray(root.encodingFormat).map(v => typeof v === "string" ? v : (v && v.name) || "").filter(Boolean).join(", "));
+
+      const licenseLines = asArray(root.license).map(v => {
+        if (typeof v === "string") return v;
+        if (v && typeof v === "object") return v.url || v.name || "";
+        return "";
+      }).filter(Boolean);
+      setValue("catLicenses", licenseLines.join(", "));
+
+      const accessValues = [];
+      if (root.isAccessibleForFree === true) accessValues.push("open");
+      if (root.conditionsOfAccess) {
+        accessValues.push(...String(root.conditionsOfAccess).split(/[;,]/).map(v => v.trim()).filter(Boolean));
+      }
+      setValue("catAccess", accessValues.join(", "));
+
+      const policyLines = asArray(root.publishingPrinciples).map(item => {
+        if (!item || typeof item !== "object") return "";
+        const name = item.name || "Policy";
+        const url = item.url || "";
+        return url ? `${name} | ${url}` : name;
+      }).filter(Boolean);
+      setValue("catPolicies", policyLines.join("\n"));
+
+      const providerLines = asArray(root.provider).map(item => {
+        if (!item || typeof item !== "object") return "";
+        return parseProvider(item);
+      }).filter(Boolean);
+      setValue("catProviders", providerLines.join("\n"));
+
+      const contactPoints = asArray(root.contactPoint).map(item => {
+        if (!item || typeof item !== "object") return "";
+        return item.email || item.url || "";
+      }).filter(Boolean).join(", ");
+      setValue("catContacts", contactPoints);
+
+      const apiLines = asArray(root.distribution).map(item => {
+        if (!item || typeof item !== "object") return "";
+        const apiType = item.encodingFormat || item.name || "API";
+        const url = item.contentUrl || item.url || "";
+        return url ? `${apiType} | ${url}` : "";
+      }).filter(Boolean);
+      setValue("catApis", apiLines.join("\n"));
+
+      const stdLines = [];
+      asArray(root.additionalProperty).forEach(item => {
+        if (!item || typeof item !== "object") return;
+        if (item.propertyID === "metadataStandard") {
+          stdLines.push(`${item.name || "Metadata Standard"} | ${item.value || item.url || ""}`);
+        }
+      });
+      setValue("catStandards", stdLines.join("\n"));
+
+      let sizeValue = "";
+      let repoTypeValue = "";
+      let pidSystemValue = "";
+      let softwareValue = "";
+      asArray(root.additionalProperty).forEach(item => {
+        if (!item || typeof item !== "object") return;
+        if (item.propertyID === "size") sizeValue = item.value || item.name || "";
+        if (item.propertyID === "repositoryType") repoTypeValue = item.value || item.name || "";
+        if (item.propertyID === "pidSystem") pidSystemValue = item.value || item.name || "";
+        if (item.propertyID === "software") softwareValue = item.value || item.name || "";
+      });
+      setValue("catSize", sizeValue);
+      setValue("catRepoType", repoTypeValue);
+      setValue("catPidSystems", pidSystemValue);
+      setValue("catSoftware", softwareValue);
+      setValue("catRemarks", root.comment || "");
+
+      const funder = root.funder;
+      if (funder && typeof funder === "object") {
+        setValue("catFunder", funder.name || "");
+      } else {
+        setValue("catFunder", "");
+      }
+
+      saveFormState();
+      generateJsonLd();
+    }
+
+    function loadJsonLdFromPaste() {
+      const text = document.getElementById("jsonLdPasteInput").value;
+      try {
+        const data = getJsonLdFromText(text);
+        populateFormFromJsonLd(data);
+        setInputStatus("JSON-LD loaded into editor.");
+      } catch (error) {
+        alert(error.message || "Could not load JSON-LD.");
+      }
+    }
+
+    function handleJsonLdFileInput(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function() {
+        try {
+          const data = getJsonLdFromText(String(reader.result || ""));
+          populateFormFromJsonLd(data);
+          setInputStatus(`Loaded ${file.name}.`);
+        } catch (error) {
+          alert(error.message || "File could not be parsed as JSON-LD.");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
     // Helper: Safely extract text regardless of XML namespace prefix
     function getXmlText(parent, localName) {
       if (!parent) return "";
@@ -623,6 +903,8 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
         document.head.appendChild(existingTag);
       }
       existingTag.textContent = formattedJson;
+
+      saveFormState();
     }
 
     // Copy helper
@@ -638,9 +920,15 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
 
     // Auto-regenerate JSON-LD whenever any editor input changes
     document.getElementById("editorForm").addEventListener("input", generateJsonLd);
+    document.getElementById("jsonLdFileInput").addEventListener("change", handleJsonLdFileInput);
 
     // Initialize form with sample XML on load
-    window.addEventListener("DOMContentLoaded", parseXmlToForm);
+    window.addEventListener("DOMContentLoaded", () => {
+      const restored = restoreSavedSession();
+      if (!restored) {
+        parseXmlToForm();
+      }
+    });
   </script>
 <p>For vizualisation and similar, you can use the playground: https://json-ld.org/playground/</p></body>
 </html>
