@@ -16,13 +16,12 @@
     button:hover { background: #004494; }
     button.secondary { background: #2e7d32; margin-left: 0.5rem; }
     button.secondary:hover { background: #1b5e20; }
-    .small { padding: 0.45rem 0.8rem; font-size: 0.85rem; }
+    button.small { padding: 0.45rem 0.8rem; font-size: 0.85rem; }
     .row { display: flex; gap: 1rem; }
     .row > div { flex: 1; }
     .toolbar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
     .status { font-size: 0.85rem; color: #2e7d32; min-height: 1.2rem; font-weight: 600; }
     .hidden { display: none !important; }
-    .muted { color: #555; font-size: 0.8rem; }
     @media (max-width: 700px) { .row { flex-direction: column; gap: 0; } }
   </style>
 </head>
@@ -40,8 +39,10 @@
     <div class="toolbar">
       <button type="button" class="secondary small" onclick="showXmlPanel()">Use XML input</button>
       <button type="button" class="secondary small" onclick="showJsonPastePanel()">Paste JSON-LD</button>
-      <button type="button" class="secondary small" onclick="restoreSavedSession()">Restore last saved version</button>
+      <button type="button" class="small" onclick="loadSampleXml()">Load sample XML</button>
+      <button type="button" class="small" onclick="restoreSavedSession()">Restore last saved version</button>
       <button type="button" class="small" onclick="document.getElementById('jsonLdFileInput').click()">Open saved JSON-LD file</button>
+      <button type="button" class="small" onclick="downloadJsonLd()">Download current JSON-LD</button>
       <button type="button" class="small" onclick="clearSavedSession()">Clear saved version</button>
     </div>
     <input type="file" id="jsonLdFileInput" accept=".json,.jsonld,application/json" class="hidden">
@@ -358,7 +359,7 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
 
     function saveFormState() {
       const state = {};
-      const fields = document.querySelectorAll("#editorForm input, #editorForm textarea");
+      const fields = document.querySelectorAll("#editorForm input, #editorForm textarea, #xmlInput, #jsonLdPasteInput, #jsonLdOutput");
       fields.forEach(field => {
         state[field.id] = field.value;
       });
@@ -421,19 +422,6 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
       return [value];
     }
 
-    function joinCsv(values) {
-      return asArray(values)
-        .map(item => {
-          if (typeof item === "string") return item.trim();
-          if (item && typeof item === "object") {
-            return item.name || item.value || item.url || item['@id'] || "";
-          }
-          return "";
-        })
-        .filter(Boolean)
-        .join(", ");
-    }
-
     function populateFormFromJsonLd(data) {
       const catalog = Array.isArray(data) ? data[0] : data;
       const root = catalog && catalog['@graph'] ? catalog['@graph'][0] : catalog;
@@ -476,7 +464,7 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
       setValue("catDateModified", root.dateModified || "");
       setValue("catLang", Array.isArray(root.inLanguage) ? root.inLanguage.join(", ") : (root.inLanguage || ""));
 
-      const aboutLines = asArray(root.about).map(item => { 
+      const aboutLines = asArray(root.about).map(item => {
         const obj = item && typeof item === "object" ? item : { name: item };
         const scheme = obj.inDefinedTermSet || obj['inDefinedTermSet'] || "";
         const name = obj.name || obj['@id'] || "";
@@ -593,6 +581,29 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
       };
       reader.readAsText(file);
       event.target.value = "";
+    }
+
+    function downloadJsonLd() {
+      const rawText = document.getElementById("jsonLdOutput").value || "";
+      const match = rawText.match(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/i);
+      const jsonText = match ? match[1] : rawText;
+      const blob = new Blob([jsonText], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "datacatalog.jsonld";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      setInputStatus("Current JSON-LD downloaded as datacatalog.jsonld");
+    }
+
+    function loadSampleXml() {
+      const xmlInput = document.getElementById("xmlInput");
+      xmlInput.value = xmlInput.value.trim() ? xmlInput.value : xmlInput.value;
+      parseXmlToForm();
+      setInputStatus("Sample XML loaded into the editor.");
     }
 
     // Helper: Safely extract text regardless of XML namespace prefix
@@ -922,7 +933,7 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
     document.getElementById("editorForm").addEventListener("input", generateJsonLd);
     document.getElementById("jsonLdFileInput").addEventListener("change", handleJsonLdFileInput);
 
-    // Initialize form with sample XML on load
+    // Initialize form with sample XML on load if no saved version exists
     window.addEventListener("DOMContentLoaded", () => {
       const restored = restoreSavedSession();
       if (!restored) {
