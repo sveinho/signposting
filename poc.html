@@ -906,7 +906,7 @@
       };
 
       const formattedJson = JSON.stringify(jsonLd, null, 2);
-      const snippet = `<script type="application/ld+json">${formattedJson}<\\/script>`;
+      const snippet = `<script type="application/ld+json">${formattedJson}</script>`;
 
       document.getElementById("jsonLdOutput").value = snippet;
 
