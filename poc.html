@@ -285,7 +285,7 @@ Please note that some datasets in this collection are restricted to University o
     <span id="copyFeedback" style="margin-left: 0.75rem; font-size: 0.85rem; color: #2e7d32; font-weight: bold;"></span>
   </fieldset>
   <script>
-    // Helper: Safely extract text regardless of XML namespace prefix
+        // Helper: Safely extract text regardless of XML namespace prefix
     function getXmlText(parent, localName) {
       if (!parent) return "";
       const el = parent.getElementsByTagNameNS("*", localName)[0];
@@ -318,7 +318,8 @@ Please note that some datasets in this collection are restricted to University o
         return;
       }
 
-      const repoNode = xmlDoc.getElementsByTagNameNS("*", "repository")[0] || xmlDoc;
+       const repoNode = xmlDoc.getElementsByTagNameNS("*", "repository")[0] || xmlDoc;
+
 
       // Core identity & dates
       const r3dId = getXmlText(repoNode, "re3data.orgIdentifier");
