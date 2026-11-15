@@ -486,8 +486,9 @@ Please note that some datasets in this collection are restricted to University o
             }
           }
           if (resp) {
-            org.additionalType = resp;
+            org.disambiguatingDescription = `Responsibility: ${resp}`;
           }
+
           return org;
         });
 
@@ -552,6 +553,7 @@ Please note that some datasets in this collection are restricted to University o
         });
 
       // Parse Related Repositories (v4.0) -> schema:isRelatedTo (DataCatalog[])
+            // Parse Related Repositories (v4.0) -> schema:isPartOf (DataCatalog[])
       const relatedRepos = document.getElementById("catRelatedRepos").value
         .split("\n")
         .map(line => line.trim())
@@ -566,12 +568,14 @@ Please note that some datasets in this collection are restricted to University o
             rel.identifier = rawId;
             if (rawId.startsWith("r3d")) {
               rel["@id"] = `https://re3data.org{rawId}`;
+              rel.url = `https://re3data.org{rawId}`;
             } else if (rawId.startsWith("http")) {
               rel.url = rawId;
             }
           }
           return rel;
         });
+
       // Build additionalProperty array for re3data-specific technical metadata
       const additionalProps = [];
       const pidSystems = document.getElementById("catPidSystems").value.trim();
