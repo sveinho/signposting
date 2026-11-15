@@ -285,6 +285,21 @@ Please note that some datasets in this collection are restricted to University o
     <span id="copyFeedback" style="margin-left: 0.75rem; font-size: 0.85rem; color: #2e7d32; font-weight: bold;"></span>
   </fieldset>
   <script>
+    // Helper: Safely extract text regardless of XML namespace prefix or dots in tag names
+    function getXmlText(parent, localName) {
+      if (!parent) return "";
+      const nsMatch = parent.getElementsByTagNameNS("*", localName);
+      if (nsMatch) return nsMatch.textContent.trim();
+
+      const allElements = parent.getElementsByTagName("*");
+      for (let i = 0; i < allElements.length; i++) {
+        if (allElements[i].localName === localName) {
+          return allElements[i].textContent.trim();
+        }
+      }
+      return "";
+    }
+
        // Helper: Safely extract text regardless of XML namespace prefix or dots in tag names
     function getXmlText(parent, localName) {
       if (!parent) return "";
