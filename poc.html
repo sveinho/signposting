@@ -25,14 +25,14 @@
 
   <h1>Tool for converting re3data v4 repository metadata to JSON-LD</h1>
   <p>Usage: Repository managers should:
-    <br>a) search in re3data and find the re3 identifier for their own repository, like re3data example file for Odum Institute: 
-    https://www.re3data.org/repository/r3d100000001, so <code>r3d100000001</code> and 
-    <br>b) use their browser to visit the API address adding only the number of the record, 
-    like: <code>https://www.re3data.org/api/v1/repository/100000001</code>. 
-  <br><strong>STEP 1)</strong> Copy the full XML source from the browser (right-click and <strong>view source to copy the full XML</strong>) and paste it below. 
-  <br><strong>STEP 2)</strong> Parse XML into the editor and edit or supplement fields. 
-  <br><strong>STEP 3)</strong> Copy and verify the generated JSON-LD.</p> 
- 
+    <br>a) search in re3data and find the re3 identifier for their own repository, like re3data example file for Odum Institute:
+    https://www.re3data.org/repository/r3d100000001, so <code>r3d100000001</code> and
+    <br>b) use their browser to visit the API address adding only the number of the record,
+    like: <code>https://www.re3data.org/api/v40/repository/100000001</code>.
+  <br><strong>STEP 1)</strong> Copy the full XML source from the browser (right-click and <strong>view source to copy the full XML</strong>) and paste it below.
+  <br><strong>STEP 2)</strong> Parse XML into the editor and edit or supplement fields.
+  <br><strong>STEP 3)</strong> Copy and verify the generated JSON-LD.</p>
+
   <!-- STEP 1: PASTE XML -->
   <fieldset>
     <legend>1. Paste Raw re3data v4 XML</legend>
@@ -43,8 +43,7 @@
         <r3d:re3data.orgIdentifier>r3d100000001</r3d:re3data.orgIdentifier>
         <r3d:repositoryName language="eng">Odum Institute Archive Dataverse</r3d:repositoryName>
         <r3d:repositoryURL>https://dataverse.unc.edu/dataverse/odum</r3d:repositoryURL>
-        <r3d:description language="eng">The Odum Institute Archive Dataverse contains social science data curated and archived by the Odum Institute Data Archive at the University of North Carolina at Chapel Hill. Some key collections include the primary holdings of the Louis Harris Data Center, the National Network of State Polls, and other Southern-focused public opinion data.
-Please note that some datasets in this collection are restricted to University of North Carolina at Chapel Hill affiliates. Access to these datasets require UNC ONYEN institutional login to the Dataverse system.</r3d:description>
+        <r3d:description language="eng">The Odum Institute Archive Dataverse contains social science data curated and archived by the Odum Institute Data Archive at the University of North Carolina at Chapel Hill.</r3d:description>
         <r3d:repositoryContact>https://uncch-rdmc.atlassian.net/servicedesk/customer/portal/4</r3d:repositoryContact>
         <r3d:repositoryContact>odumarchive@unc.edu</r3d:repositoryContact>
         <r3d:type>disciplinary</r3d:type>
@@ -52,28 +51,12 @@ Please note that some datasets in this collection are restricted to University o
         <r3d:repositoryLanguage>eng</r3d:repositoryLanguage>
         <r3d:subject subjectScheme="DFG">1 Humanities and Social Sciences</r3d:subject>
         <r3d:subject subjectScheme="DFG">111 Social Sciences</r3d:subject>
-        <r3d:subject subjectScheme="DFG">11104 Political Science</r3d:subject>
-        <r3d:subject subjectScheme="DFG">112 Economics</r3d:subject>
-        <r3d:subject subjectScheme="DFG">12 Social and Behavioural Sciences</r3d:subject>
         <r3d:missionStatementURL>https://odum.unc.edu/archive/</r3d:missionStatementURL>
         <r3d:contentType contentTypeScheme="parse">Databases</r3d:contentType>
         <r3d:contentType contentTypeScheme="parse">Plain text</r3d:contentType>
-        <r3d:contentType contentTypeScheme="parse">Scientific and statistical data formats</r3d:contentType>
-        <r3d:contentType contentTypeScheme="parse">Standard office documents</r3d:contentType>
-        <r3d:contentType contentTypeScheme="parse">other</r3d:contentType>
         <r3d:providerType>dataProvider</r3d:providerType>
         <r3d:keyword>FAIR</r3d:keyword>
         <r3d:keyword>Middle East</r3d:keyword>
-        <r3d:keyword>crime</r3d:keyword>
-        <r3d:keyword>demography</r3d:keyword>
-        <r3d:keyword>economy</r3d:keyword>
-        <r3d:keyword>education</r3d:keyword>
-        <r3d:keyword>election</r3d:keyword>
-        <r3d:keyword>environment</r3d:keyword>
-        <r3d:keyword>finance</r3d:keyword>
-        <r3d:keyword>health care</r3d:keyword>
-        <r3d:keyword>presidents United States</r3d:keyword>
-        <r3d:keyword>taxes</r3d:keyword>
         <r3d:institution>
             <r3d:institutionName language="eng">Odum Institute for Research in Social Science</r3d:institutionName>
             <r3d:institutionCountry>USA</r3d:institutionCountry>
@@ -81,33 +64,9 @@ Please note that some datasets in this collection are restricted to University o
             <r3d:institutionType>non-profit</r3d:institutionType>
             <r3d:institutionURL>https://odum.unc.edu/archive/</r3d:institutionURL>
         </r3d:institution>
-        <r3d:institution>
-            <r3d:institutionName language="eng">University of North Carolina at Chapel Hill</r3d:institutionName>
-            <r3d:institutionAdditionalName language="eng">UNC</r3d:institutionAdditionalName>
-            <r3d:institutionCountry>USA</r3d:institutionCountry>
-            <r3d:responsibilityType>general</r3d:responsibilityType>
-            <r3d:institutionType>non-profit</r3d:institutionType>
-            <r3d:institutionURL>https://www.unc.edu</r3d:institutionURL>
-            <r3d:institutionIdentifier>ROR:0130frc33</r3d:institutionIdentifier>
-        </r3d:institution>
-        <r3d:policy>
-            <r3d:policyName>Collection Development Policy</r3d:policyName>
-            <r3d:policyURL>https://odum.unc.edu/wp-content/uploads/sites/1060/2020/01/Policy_CollectionDevelopment_20170501.pdf</r3d:policyURL>
-        </r3d:policy>
-        <r3d:policy>
-            <r3d:policyName>Metadata Guidelines</r3d:policyName>
-            <r3d:policyURL>https://odum.unc.edu/wp-content/uploads/sites/1060/2020/01/Guidelines_Metadata_20170501.pdf</r3d:policyURL>
-        </r3d:policy>
         <r3d:databaseAccess>
             <r3d:databaseAccessType>open</r3d:databaseAccessType>
         </r3d:databaseAccess>
-        <r3d:databaseLicense>
-            <r3d:databaseLicenseName>CC0</r3d:databaseLicenseName>
-            <r3d:databaseLicenseURL>https://creativecommons.org/share-your-work/public-domain/cc0</r3d:databaseLicenseURL>
-        </r3d:databaseLicense>
-        <r3d:dataAccess>
-            <r3d:dataAccessType>embargoed</r3d:dataAccessType>
-        </r3d:dataAccess>
         <r3d:dataAccess>
             <r3d:dataAccessType>open</r3d:dataAccessType>
         </r3d:dataAccess>
@@ -115,42 +74,24 @@ Please note that some datasets in this collection are restricted to University o
             <r3d:dataAccessType>restricted</r3d:dataAccessType>
             <r3d:dataAccessRestriction>institutional membership</r3d:dataAccessRestriction>
         </r3d:dataAccess>
-        <r3d:dataLicense>
-            <r3d:dataLicenseName>CC</r3d:dataLicenseName>
-            <r3d:dataLicenseURL>https://creativecommons.org/share-your-work/public-domain/cc0</r3d:dataLicenseURL>
-        </r3d:dataLicense>
+        <r3d:databaseLicense>
+            <r3d:databaseLicenseName>CC0</r3d:databaseLicenseName>
+            <r3d:databaseLicenseURL>https://creativecommons.org/share-your-work/public-domain/cc0</r3d:databaseLicenseURL>
+        </r3d:databaseLicense>
         <r3d:dataLicense>
             <r3d:dataLicenseName>CC0</r3d:dataLicenseName>
             <r3d:dataLicenseURL>https://creativecommons.org/share-your-work/public-domain/cc0</r3d:dataLicenseURL>
         </r3d:dataLicense>
-        <r3d:dataUpload>
-            <r3d:dataUploadType>restricted</r3d:dataUploadType>
-            <r3d:dataUploadRestriction>institutional membership</r3d:dataUploadRestriction>
-        </r3d:dataUpload>
         <r3d:software>
             <r3d:softwareName>Dataverse</r3d:softwareName>
         </r3d:software>
-        <r3d:versioning></r3d:versioning>
         <r3d:api apiType="OAI-PMH">https://dataverse.unc.edu/oai?verb=Identify</r3d:api>
         <r3d:pidSystem>DOI</r3d:pidSystem>
-        <r3d:citationGuidelineURL></r3d:citationGuidelineURL>
-        <r3d:enhancedPublication></r3d:enhancedPublication>
-        <r3d:qualityManagement>yes</r3d:qualityManagement>
         <r3d:metadataStandard>
             <r3d:metadataStandardName metadataStandardScheme="DCC">DDI - Data Documentation Initiative</r3d:metadataStandardName>
             <r3d:metadataStandardURL>http://www.dcc.ac.uk/resources/metadata-standards/ddi-data-documentation-initiative</r3d:metadataStandardURL>
         </r3d:metadataStandard>
-        <r3d:metadataStandard>
-            <r3d:metadataStandardName metadataStandardScheme="DCC">DataCite Metadata Schema</r3d:metadataStandardName>
-            <r3d:metadataStandardURL>http://www.dcc.ac.uk/resources/metadata-standards/datacite-metadata-schema</r3d:metadataStandardURL>
-        </r3d:metadataStandard>
-        <r3d:metadataStandard>
-            <r3d:metadataStandardName metadataStandardScheme="DCC">Dublin Core</r3d:metadataStandardName>
-            <r3d:metadataStandardURL>http://www.dcc.ac.uk/resources/metadata-standards/dublin-core</r3d:metadataStandardURL>
-        </r3d:metadataStandard>
-        <r3d:remarks>Odum Dataverse is covered by Thomson Reuters Data Citation Index.
-Odum Institute Archive Dataverse is part of UNC Dataverse
-Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remarks>
+        <r3d:remarks>Odum Dataverse is covered by Thomson Reuters Data Citation Index.</r3d:remarks>
         <r3d:entryDate>2013-06-10</r3d:entryDate>
         <r3d:lastUpdate>2026-01-14</r3d:lastUpdate>
     </r3d:repository>
@@ -289,129 +230,142 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
   </fieldset>
 
   <script>
-    // Helper: Safely extract text regardless of XML namespace prefix
-    function getXmlText(parent, localName) {
-      if (!parent) return "";
-      const el = parent.getElementsByTagNameNS("*", localName)[0];
-      return el ? el.textContent.trim() : "";
+    function normalizeXmlString(xmlText) {
+      let value = String(xmlText || "").replace(/^\uFEFF/, "").trim();
+      if (!value) return value;
+      if (!value.startsWith("<?xml")) {
+        value = `<?xml version="1.0" encoding="UTF-8"?>\n${value}`;
+      }
+      return value;
     }
 
-    // Helper: Extract array of all matching elements' text
-    function getXmlAllText(parent, localName) {
+    function localName(node) {
+      if (!node) return "";
+      return node.localName || String(node.nodeName || "").replace(/^.*?:/, "");
+    }
+
+    function getXmlText(parent, names) {
+      if (!parent) return "";
+      const candidates = Array.isArray(names) ? names : [names];
+      const matches = Array.from(parent.getElementsByTagName("*"))
+        .filter(el => candidates.includes(localName(el)));
+      return matches.length ? matches[0].textContent.trim() : "";
+    }
+
+    function getXmlAllText(parent, names) {
       if (!parent) return [];
-      return Array.from(parent.getElementsByTagNameNS("*", localName))
+      const candidates = Array.isArray(names) ? names : [names];
+      return Array.from(parent.getElementsByTagName("*"))
+        .filter(el => candidates.includes(localName(el)))
         .map(el => el.textContent.trim())
         .filter(Boolean);
     }
 
-    // Helper: Map ISO 639-2/3 from re3data (e.g., 'eng') to BCP 47 / ISO 639-1 ('en')
     function normalizeLang(code) {
       const map = { eng: "en", nor: "no", nob: "nb", nno: "nn", deu: "de", ger: "de", fra: "fr", fre: "fr", spa: "es", swe: "sv", dan: "da" };
-      const clean = code.toLowerCase().trim();
+      const clean = String(code || "").toLowerCase().trim();
       return map[clean] || clean;
     }
 
-    // 2. Parse XML into Form Fields
     function parseXmlToForm() {
-      const xmlString = document.getElementById("xmlInput").value;
+      const xmlString = normalizeXmlString(document.getElementById("xmlInput").value);
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(xmlString, "application/xml");
 
       if (xmlDoc.querySelector("parsererror")) {
-        alert("Invalid XML format. Please check that you select view source in browser to copy and paste the complete XML source here.");
+        alert("Invalid XML format. Please check that you selected view source in the browser and pasted the complete XML source here.");
         return;
       }
 
-      const repoNode = xmlDoc.getElementsByTagNameNS("*", "repository")[0] || xmlDoc;
+      const repoNode = xmlDoc.getElementsByTagNameNS("*", "repository")[0] || xmlDoc.documentElement;
 
-      // Core identity & dates
-      const r3dId = getXmlText(repoNode, "re3data.orgIdentifier");
+      const r3dId = getXmlText(repoNode, [
+        "re3data.orgIdentifier",
+        "re3data_orgIdentifier",
+        "re3dataOrgIdentifier",
+        "re3dataIdentifier"
+      ]);
       document.getElementById("r3dIdentifier").value = r3dId;
       document.getElementById("catId").value = r3dId ? `https://www.re3data.org/repository/${r3dId}` : "";
-      document.getElementById("catName").value = getXmlText(repoNode, "repositoryName");
-      document.getElementById("catUrl").value = getXmlText(repoNode, "repositoryURL");
-      document.getElementById("catDesc").value = getXmlText(repoNode, "description");
-      document.getElementById("catDatePublished").value = getXmlText(repoNode, "entryDate");
-      document.getElementById("catDateModified").value = getXmlText(repoNode, "lastUpdate") || new Date().toISOString().split("T")[0];
+      document.getElementById("catName").value = getXmlText(repoNode, ["repositoryName"]);
+      document.getElementById("catUrl").value = getXmlText(repoNode, ["repositoryURL"]);
+      document.getElementById("catDesc").value = getXmlText(repoNode, ["description"]);
+      document.getElementById("catDatePublished").value = getXmlText(repoNode, ["entryDate"]);
+      document.getElementById("catDateModified").value = getXmlText(repoNode, ["lastUpdate"]) || new Date().toISOString().split("T")[0];
 
-      // Languages
-      const langs = getXmlAllText(repoNode, "repositoryLanguage").map(normalizeLang);
+      const langs = getXmlAllText(repoNode, ["repositoryLanguage"]).map(normalizeLang);
       document.getElementById("catLang").value = langs.length ? langs.join(", ") : "en";
 
-      // Subjects (Scheme | Subject)
-      const subjectNodes = Array.from(repoNode.getElementsByTagNameNS("*", "subject"));
+      const subjectNodes = Array.from(repoNode.getElementsByTagName("*"))
+        .filter(el => localName(el) === "subject");
       document.getElementById("catSubjects").value = subjectNodes.map(n => {
-        const scheme = n.getAttribute("subjectScheme") || "";
+        const scheme = n.getAttribute("subjectScheme") || n.getAttribute("scheme") || "";
         return `${scheme} | ${n.textContent.trim()}`;
       }).join("\n");
 
-      // Keywords, Content Types & PID Systems
-      document.getElementById("catKeywords").value = getXmlAllText(repoNode, "keyword").join(", ");
-      document.getElementById("catContentTypes").value = getXmlAllText(repoNode, "contentType").join(", ");
-      document.getElementById("catPidSystems").value = getXmlAllText(repoNode, "pidSystem").join(", ");
+      document.getElementById("catKeywords").value = getXmlAllText(repoNode, ["keyword"]).join(", ");
+      document.getElementById("catContentTypes").value = getXmlAllText(repoNode, ["contentType"]).join(", ");
+      document.getElementById("catPidSystems").value = getXmlAllText(repoNode, ["pidSystem"]).join(", ");
 
-      // Institutions (Name | URL | Country | Identifier | Responsibility)
-      const instNodes = Array.from(repoNode.getElementsByTagNameNS("*", "institution"));
+      const instNodes = Array.from(repoNode.getElementsByTagName("*"))
+        .filter(el => localName(el) === "institution");
       document.getElementById("catProviders").value = instNodes.map(inst => {
-        const name = getXmlText(inst, "institutionName");
-        const url = getXmlText(inst, "institutionURL");
-        const country = getXmlText(inst, "institutionCountry");
-        const id = getXmlText(inst, "institutionIdentifier");
-        const resp = getXmlAllText(inst, "responsibilityType").join(",");
+        const name = getXmlText(inst, ["institutionName"]);
+        const url = getXmlText(inst, ["institutionURL"]);
+        const country = getXmlText(inst, ["institutionCountry"]);
+        const id = getXmlText(inst, ["institutionIdentifier"]);
+        const resp = getXmlAllText(inst, ["responsibilityType"]).join(",");
         return `${name} | ${url} | ${country} | ${id} | ${resp}`;
       }).join("\n");
 
-      // Licenses (deduplicated URLs from dataLicense and databaseLicense)
       const licenseUrls = [
-        ...getXmlAllText(repoNode, "dataLicenseURL"),
-        ...getXmlAllText(repoNode, "databaseLicenseURL")
+        ...getXmlAllText(repoNode, ["dataLicenseURL"]),
+        ...getXmlAllText(repoNode, ["databaseLicenseURL"])
       ].filter((v, i, a) => a.indexOf(v) === i);
       document.getElementById("catLicenses").value = licenseUrls.join(", ");
 
-      // Access Types
-      const dbAccess = getXmlAllText(repoNode, "databaseAccessType").map(t => `database:${t}`);
-      const dataAccess = getXmlAllText(repoNode, "dataAccessType").map(t => `data:${t}`);
-      document.getElementById("catAccess").value = [...dbAccess, ...dataAccess].join(", ");
+      const dbAccess = getXmlAllText(repoNode, ["databaseAccessType"]).map(t => `database:${t}`);
+      const dataAccess = getXmlAllText(repoNode, ["dataAccessType"]).map(t => `data:${t}`);
+      const restrictions = getXmlAllText(repoNode, ["dataAccessRestriction"]).map(t => `restriction:${t}`);
+      document.getElementById("catAccess").value = [...dbAccess, ...dataAccess, ...restrictions].join(", ");
 
-      // Policies + Mission Statement
       const policies = [];
-      const missionUrl = getXmlText(repoNode, "missionStatementURL");
+      const missionUrl = getXmlText(repoNode, ["missionStatementURL"]);
       if (missionUrl) policies.push(`Mission Statement | ${missionUrl}`);
-      const citationUrl = getXmlText(repoNode, "citationGuidelineURL");
+      const citationUrl = getXmlText(repoNode, ["citationGuidelineURL"]);
       if (citationUrl) policies.push(`Citation Guidelines | ${citationUrl}`);
 
-      Array.from(repoNode.getElementsByTagNameNS("*", "policy")).forEach(p => {
-        policies.push(`${getXmlText(p, "policyName")} | ${getXmlText(p, "policyURL")}`);
-      });
+      Array.from(repoNode.getElementsByTagName("*"))
+        .filter(el => localName(el) === "policy")
+        .forEach(p => {
+          policies.push(`${getXmlText(p, ["policyName"])} | ${getXmlText(p, ["policyURL"])}`);
+        });
       document.getElementById("catPolicies").value = policies.join("\n");
 
-      // Contacts & Software
-      document.getElementById("catContacts").value = getXmlAllText(repoNode, "repositoryContact").join(", ");
-      document.getElementById("catSoftware").value = getXmlAllText(repoNode, "softwareName").join(", ");
+      document.getElementById("catContacts").value = getXmlAllText(repoNode, ["repositoryContact"]).join(", ");
+      document.getElementById("catSoftware").value = getXmlAllText(repoNode, ["softwareName"]).join(", ");
 
-      // APIs (Type | URL)
-      const apiNodes = Array.from(repoNode.getElementsByTagNameNS("*", "api"));
+      const apiNodes = Array.from(repoNode.getElementsByTagName("*"))
+        .filter(el => localName(el) === "api");
       document.getElementById("catApis").value = apiNodes.map(a => {
         const type = a.getAttribute("apiType") || "API";
         return `${type} | ${a.textContent.trim()}`;
       }).join("\n");
 
-      // Metadata Standards (Name | URL)
-      const stdNodes = Array.from(repoNode.getElementsByTagNameNS("*", "metadataStandard"));
+      const stdNodes = Array.from(repoNode.getElementsByTagName("*"))
+        .filter(el => localName(el) === "metadataStandard");
       document.getElementById("catStandards").value = stdNodes.map(s => {
-        return `${getXmlText(s, "metadataStandardName")} | ${getXmlText(s, "metadataStandardURL")}`;
+        return `${getXmlText(s, ["metadataStandardName"]) } | ${getXmlText(s, ["metadataStandardURL"])}`;
       }).join("\n");
 
-      // Extra Context
-      document.getElementById("catSize").value = getXmlText(repoNode, "size");
-      const repoTypes = [...getXmlAllText(repoNode, "type"), ...getXmlAllText(repoNode, "providerType")];
+      document.getElementById("catSize").value = getXmlText(repoNode, ["size"]);
+      const repoTypes = [...getXmlAllText(repoNode, ["type"]), ...getXmlAllText(repoNode, ["providerType"])];
       document.getElementById("catRepoType").value = repoTypes.join(", ");
-      document.getElementById("catRemarks").value = getXmlText(repoNode, "remarks");
+      document.getElementById("catRemarks").value = getXmlText(repoNode, ["remarks"]);
 
       generateJsonLd();
     }
 
-    // Helper: Split comma-separated string cleanly
     function splitCsv(id) {
       return document.getElementById(id).value
         .split(",")
@@ -419,7 +373,6 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
         .filter(Boolean);
     }
 
-    // 3. Build Comprehensive Schema.org DataCatalog JSON-LD
     function generateJsonLd() {
       const keywords = splitCsv("catKeywords");
       const langs = splitCsv("catLang");
@@ -427,7 +380,6 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
       const licenses = splitCsv("catLicenses");
       const accessTypes = splitCsv("catAccess");
 
-      // Parse Subjects -> schema:about (DefinedTerm)
       const about = document.getElementById("catSubjects").value
         .split("\n")
         .map(line => line.trim())
@@ -441,7 +393,6 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
           };
         });
 
-      // Parse Providers -> schema:provider (Organization[])
       const providers = document.getElementById("catProviders").value
         .split("\n")
         .map(line => line.trim())
@@ -468,7 +419,6 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
           return org;
         });
 
-      // Parse Policies -> schema:publishingPrinciples (CreativeWork[])
       const policies = document.getElementById("catPolicies").value
         .split("\n")
         .map(line => line.trim())
@@ -482,7 +432,6 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
           };
         });
 
-      // Parse Contacts -> schema:contactPoint (ContactPoint[])
       const contactPoints = splitCsv("catContacts").map(c => {
         const isEmail = c.includes("@") && !c.startsWith("http");
         return {
@@ -493,7 +442,6 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
         };
       });
 
-      // Parse APIs -> schema:distribution (DataDownload[])
       const distributions = document.getElementById("catApis").value
         .split("\n")
         .map(line => line.trim())
@@ -508,7 +456,6 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
           };
         });
 
-      // Build additionalProperty array for re3data-specific technical metadata
       const additionalProps = [];
       const pidSystems = document.getElementById("catPidSystems").value.trim();
       if (pidSystems) {
@@ -581,7 +528,6 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
 
       document.getElementById("jsonLdOutput").value = embedSnippet;
 
-      // Live-embed into current document <head>
       let existingTag = document.getElementById("dynamic-datacatalog-jsonld");
       if (!existingTag) {
         existingTag = document.createElement("script");
@@ -592,7 +538,6 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
       existingTag.textContent = formattedJson;
     }
 
-    // Copy helper
     function copyJsonLd() {
       const output = document.getElementById("jsonLdOutput");
       output.select();
@@ -603,11 +548,8 @@ Odum Institute Archive Dataverse was CTS certified until 2023-10-31.</r3d:remark
       });
     }
 
-    // Auto-regenerate JSON-LD whenever any editor input changes
     document.getElementById("editorForm").addEventListener("input", generateJsonLd);
-
-    // Initialize form with sample XML on load
     window.addEventListener("DOMContentLoaded", parseXmlToForm);
   </script>
-<p>For vizualisation and similar, you can use the playground: https://json-ld.org/playground/</p></body>
+<p>For visualisation and similar, you can use the playground: https://json-ld.org/playground/</p></body>
 </html>
