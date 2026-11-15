@@ -285,16 +285,16 @@ Please note that some datasets in this collection are restricted to University o
     <span id="copyFeedback" style="margin-left: 0.75rem; font-size: 0.85rem; color: #2e7d32; font-weight: bold;"></span>
   </fieldset>
   <script>
-    // Helper: Safely extract text regardless of XML namespace prefix or dots in tag names
+       // Helper: Safely extract text regardless of XML namespace prefix or dots in tag names
     function getXmlText(parent, localName) {
       if (!parent) return "";
-      const nsMatch = parent.getElementsByTagNameNS("*", localName);
+      const nsMatch = parent.getElementsByTagNameNS("*", localName).item(0);
       if (nsMatch) return nsMatch.textContent.trim();
 
       const allElements = parent.getElementsByTagName("*");
       for (let i = 0; i < allElements.length; i++) {
-        if (allElements[i].localName === localName) {
-          return allElements[i].textContent.trim();
+        if (allElements.item(i).localName === localName) {
+          return allElements.item(i).textContent.trim();
         }
       }
       return "";
@@ -331,7 +331,7 @@ Please note that some datasets in this collection are restricted to University o
         return;
       }
 
-      const repoNode = xmlDoc.getElementsByTagNameNS("*", "repository") || xmlDoc.documentElement;
+      const repoNode = xmlDoc.getElementsByTagNameNS("*", "repository").item(0) || xmlDoc.documentElement;
 
       // Core identity & dates
       const r3dId = getXmlText(repoNode, "re3data.orgIdentifier");
@@ -343,11 +343,12 @@ Please note that some datasets in this collection are restricted to University o
       document.getElementById("catExtraIds").value = getXmlAllText(repoNode, "repositoryIdentifier").join(", ");
       document.getElementById("catDesc").value = getXmlText(repoNode, "description");
       document.getElementById("catDatePublished").value = getXmlText(repoNode, "entryDate");
-      document.getElementById("catDateModified").value = getXmlText(repoNode, "lastUpdate") || new Date().toISOString().split("T");
+      document.getElementById("catDateModified").value = getXmlText(repoNode, "lastUpdate") || new Date().toISOString().slice(0, 10);
 
       // Languages
       const langs = getXmlAllText(repoNode, "repositoryLanguage").map(normalizeLang);
       document.getElementById("catLang").value = langs.length ? langs.join(", ") : "en";
+
       // Subjects (Scheme | Subject)
       const subjectNodes = Array.from(repoNode.getElementsByTagNameNS("*", "subject"));
       document.getElementById("catSubjects").value = subjectNodes.map(n => {
@@ -660,34 +661,36 @@ Please note that some datasets in this collection are restricted to University o
       });
 
       const remarks = document.getElementById("catRemarks").value.trim();
+      const singleOrArray = arr => (arr.length === 0 ? undefined : (arr.length === 1 ? arr.at(0) : arr));
 
       const jsonLd = {
         "@context": "https://schema.org",
         "@type": "DataCatalog",
         "@id": document.getElementById("catId").value.trim() || undefined,
-        "identifier": identifierList.length ? (identifierList.length === 1 ? identifierList : identifierList) : undefined,
+        "identifier": singleOrArray(identifierList),
         "name": document.getElementById("catName").value.trim(),
-        "alternateName": altNames.length ? (altNames.length === 1 ? altNames : altNames) : undefined,
+        "alternateName": singleOrArray(altNames),
         "url": document.getElementById("catUrl").value.trim(),
         "description": document.getElementById("catDesc").value.trim(),
         "datePublished": document.getElementById("catDatePublished").value || undefined,
         "dateModified": document.getElementById("catDateModified").value || undefined,
-        "inLanguage": langs.length ? (langs.length === 1 ? langs : langs) : undefined,
+        "inLanguage": singleOrArray(langs),
         "about": about.length ? about : undefined,
         "keywords": keywords.length ? keywords : undefined,
         "encodingFormat": contentTypes.length ? contentTypes : undefined,
-        "license": licenses.length ? (licenses.length === 1 ? licenses : licenses) : undefined,
+        "license": singleOrArray(licenses),
         "isAccessibleForFree": accessTypes.some(a => a.includes("open")) ? true : undefined,
         "conditionsOfAccess": accessTypes.length ? accessTypes.join(", ") : undefined,
         "publishingPrinciples": policies.length ? policies : undefined,
-        "provider": providers.length ? (providers.length === 1 ? providers : providers) : undefined,
-        "funder": funders.length ? (funders.length === 1 ? funders : funders) : undefined,
+        "provider": singleOrArray(providers),
+        "funder": singleOrArray(funders),
         "contactPoint": contactPoints.length ? contactPoints : undefined,
         "distribution": distributions.length ? distributions : undefined,
-        "isPartOf": relatedRepos.length ? (relatedRepos.length === 1 ? relatedRepos : relatedRepos) : undefined,
+        "isPartOf": singleOrArray(relatedRepos),
         "additionalProperty": additionalProps.length ? additionalProps : undefined,
         "comment": remarks || undefined
       };
+
 
       const formattedJson = JSON.stringify(jsonLd, null, 2);
       const embedSnippet = `<script type="application/ld+json">\n${formattedJson}\n<\/script>`;
