@@ -34,15 +34,15 @@
     <legend>1. Paste Raw re3data v4 XML</legend>
     <label for="xmlInput">Paste the Raw re3data v4 XML here - replace the example:</label>
     <textarea id="xmlInput" rows="14"><?xml version="1.0" encoding="utf-8"?>
-<r3d:re3data xmlns:r3d="http://www.re3data.org/schema/4-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.re3data.org/schema/4-0 http://schema.re3data.org/4-0/re3dataV4-0.xsd">
+<r3d:re3data xmlns:r3d="http://www.re3data.org/schema/4-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.re3data.org/schema/4-0 http://schema.re3data.org/4-0/re3[...]
 	   <r3d:repository>
         <r3d:re3data.orgIdentifier>r3d100000001</r3d:re3data.orgIdentifier>
         <r3d:repositoryName language="eng">Odum Institute Archive Dataverse</r3d:repositoryName>
         <r3d:additionalName language="eng">Odum Data Archive</r3d:additionalName>
         <r3d:repositoryURL>https://unc.edu</r3d:repositoryURL>
         <r3d:repositoryIdentifier>FAIRsharing_doi:10.25504/FAIRsharing.7850c8</r3d:repositoryIdentifier>
-        <r3d:description language="eng">The Odum Institute Archive Dataverse contains social science data curated and archived by the Odum Institute Data Archive at the University of North Carolina at Chapel Hill. Some key collections include the primary holdings of the Louis Harris Data Center, the National Network of State Polls, and other Southern-focused public opinion data.
-Please note that some datasets in this collection are restricted to University of North Carolina at Chapel Hill affiliates. Access to these datasets require UNC ONYEN institutional login to the Dataverse system.</r3d:description>
+        <r3d:description language="eng">The Odum Institute Archive Dataverse contains social science data curated and archived by the Odum Institute Data Archive at the University of North Carolina at[...]
+Please note that some datasets in this collection are restricted to University of North Carolina at Chapel Hill affiliates. Access to these datasets require UNC ONYEN institutional login to the Datave[...]
         <r3d:repositoryContact>https://atlassian.net</r3d:repositoryContact>
         <r3d:repositoryContact>odumarchive@unc.edu</r3d:repositoryContact>
         <r3d:type>disciplinary</r3d:type>
@@ -288,21 +288,6 @@ Please note that some datasets in this collection are restricted to University o
     // Helper: Safely extract text regardless of XML namespace prefix or dots in tag names
     function getXmlText(parent, localName) {
       if (!parent) return "";
-      const nsMatch = parent.getElementsByTagNameNS("*", localName);
-      if (nsMatch) return nsMatch.textContent.trim();
-
-      const allElements = parent.getElementsByTagName("*");
-      for (let i = 0; i < allElements.length; i++) {
-        if (allElements[i].localName === localName) {
-          return allElements[i].textContent.trim();
-        }
-      }
-      return "";
-    }
-
-       // Helper: Safely extract text regardless of XML namespace prefix or dots in tag names
-    function getXmlText(parent, localName) {
-      if (!parent) return "";
       const nsMatch = parent.getElementsByTagNameNS("*", localName).item(0);
       if (nsMatch) return nsMatch.textContent.trim();
 
@@ -331,8 +316,20 @@ Please note that some datasets in this collection are restricted to University o
     // Helper: Map ISO 639-2/3 from re3data (e.g., 'eng') to BCP 47 / ISO 639-1 ('en')
     function normalizeLang(code) {
       const map = { eng: "en", nor: "no", nob: "nb", nno: "nn", deu: "de", ger: "de", fra: "fr", fre: "fr", spa: "es", swe: "sv", dan: "da" };
-      const clean = code.toLowerCase().trim();
+      const clean = String(code || "").toLowerCase().trim();
       return map[clean] || clean;
+    }
+
+    function formatRe3dataUrl(id) {
+      const clean = String(id || "").trim();
+      if (!clean) return "";
+      return `https://www.re3data.org/repository/${clean.replace(/^\/+/, "")}`;
+    }
+
+    function formatRorUrl(id) {
+      const clean = String(id || "").trim().replace(/^ROR:/i, "");
+      if (!clean) return "";
+      return `https://ror.org/${clean.replace(/^\/+/, "")}`;
     }
 
     // 2. Parse XML into Form Fields (Supports re3data v4.0 + v2.2/v3.x backward compatibility)
@@ -351,7 +348,7 @@ Please note that some datasets in this collection are restricted to University o
       // Core identity & dates
       const r3dId = getXmlText(repoNode, "re3data.orgIdentifier");
       document.getElementById("r3dIdentifier").value = r3dId;
-      document.getElementById("catId").value = r3dId ? `https://re3data.org{r3dId}` : "";
+      document.getElementById("catId").value = formatRe3dataUrl(r3dId);
       document.getElementById("catName").value = getXmlText(repoNode, "repositoryName");
       document.getElementById("catAltName").value = getXmlAllText(repoNode, "additionalName").join(", ");
       document.getElementById("catUrl").value = getXmlText(repoNode, "repositoryURL");
@@ -510,7 +507,7 @@ Please note that some datasets in this collection are restricted to University o
           if (rawId) {
             org.identifier = rawId;
             if (rawId.startsWith("ROR:")) {
-              org.sameAs = `https://ror.org{rawId.replace("ROR:", "")}`;
+              org.sameAs = formatRorUrl(rawId);
             }
           }
           if (resp) {
@@ -533,7 +530,7 @@ Please note that some datasets in this collection are restricted to University o
           if (rawId) {
             funder.identifier = rawId;
             if (rawId.startsWith("ROR:")) {
-              funder.sameAs = `https://ror.org{rawId.replace("ROR:", "")}`;
+              funder.sameAs = formatRorUrl(rawId);
             }
           }
           return funder;
@@ -593,8 +590,8 @@ Please note that some datasets in this collection are restricted to University o
           if (rawId) {
             rel.identifier = rawId;
             if (rawId.startsWith("r3d")) {
-              rel["@id"] = `https://re3data.org{rawId}`;
-              rel.url = `https://re3data.org{rawId}`;
+              rel["@id"] = formatRe3dataUrl(rawId);
+              rel.url = formatRe3dataUrl(rawId);
             } else if (rawId.startsWith("http")) {
               rel.url = rawId;
             }
@@ -656,7 +653,7 @@ Please note that some datasets in this collection are restricted to University o
           "@type": "PropertyValue",
           "propertyID": "re3data",
           "value": r3dId,
-          "url": `https://re3data.org{r3dId}`
+          "url": formatRe3dataUrl(r3dId)
         });
       }
 
