@@ -1,436 +1,454 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Copy in, edit, and copy out when going from re3data v4 metadata to DataCatalog JSON-LD</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Copy, edit, and paste from re3data v4 to DataCatalog JSON-LD</title>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; color: #222; }
-    fieldset { margin-bottom: 1.5rem; border: 1px solid #ccc; border-radius: 6px; padding: 1.2rem; background: #fafafa; }
-    legend { font-weight: bold; padding: 0 0.5rem; font-size: 1.05rem; background: #fff; border: 1px solid #ccc; border-radius: 4px; }
-    h3 { margin: 1.2rem 0 0.4rem 0; font-size: 0.95rem; color: #0056b3; border-bottom: 1px solid #ddd; padding-bottom: 0.2rem; }
-    label { display: block; margin-top: 0.75rem; font-weight: 600; font-size: 0.85rem; }
-    .hint { font-weight: normal; color: #666; font-size: 0.8rem; }
-    input, textarea { width: 100%; padding: 0.5rem; margin-top: 0.25rem; box-sizing: border-box; font-family: inherit; border: 1px solid #bbb; border-radius: 4px; background: #fff; }
-    textarea { font-family: monospace; font-size: 0.85rem; }
-    button { margin-top: 1rem; padding: 0.6rem 1.2rem; cursor: pointer; background: #0056b3; color: #fff; border: none; border-radius: 4px; font-weight: 600; }
-    button:hover { background: #004494; }
-    button.secondary { background: #2e7d32; margin-left: 0.5rem; }
-    button.secondary:hover { background: #1b5e20; }
-    .row { display: flex; gap: 1rem; }
-    .row > div { flex: 1; }
-    @media (max-width: 700px) { .row { flex-direction: column; gap: 0; } }
+    :root {
+      --bg: #f7f8fa;
+      --panel: #ffffff;
+      --border: #cfd8e3;
+      --primary: #0056b3;
+      --primary-dark: #004494;
+      --secondary: #2e7d32;
+      --secondary-dark: #1b5e20;
+      --text: #1f2933;
+      --muted: #52606d;
+      --code-bg: #f0f4f8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0 auto;
+      max-width: 980px;
+      padding: 2rem 1rem 3rem;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    fieldset {
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 1.25rem;
+    }
+
+    legend {
+      font-weight: 700;
+      padding: 0 0.5rem;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 1.05rem;
+    }
+
+    h1 {
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      margin: 0 0 1rem;
+      line-height: 1.2;
+    }
+
+    h3 {
+      margin: 1.4rem 0 0.5rem;
+      font-size: 0.96rem;
+      color: var(--primary);
+      padding-bottom: 0.25rem;
+      border-bottom: 1px solid #dfe6ee;
+    }
+
+    p {
+      margin: 0.5rem 0 1rem;
+    }
+
+    code {
+      background: var(--code-bg);
+      padding: 0.12rem 0.38rem;
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.9em;
+    }
+
+    label {
+      display: block;
+      margin-top: 0.8rem;
+      font-weight: 600;
+      font-size: 0.86rem;
+      color: var(--text);
+    }
+
+    .hint {
+      font-weight: 400;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    input, textarea {
+      width: 100%;
+      margin-top: 0.35rem;
+      padding: 0.65rem 0.7rem;
+      border: 1px solid #b8c2ce;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+    }
+
+    textarea {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.85rem;
+    }
+
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.3rem;
+      border: none;
+      border-radius: 6px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover { background: var(--primary-dark); }
+    button.secondary {
+      background: var(--secondary);
+      margin-left: 0.5rem;
+    }
+    button.secondary:hover { background: var(--secondary-dark); }
+
+    .row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .row > div {
+      flex: 1 1 220px;
+      min-width: 0;
+    }
+
+    #copyFeedback {
+      display: inline-block;
+      margin-left: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--secondary);
+      font-weight: 700;
+      min-height: 1.2em;
+    }
+
+    @media (max-width: 700px) {
+      .row {
+        flex-direction: column;
+        gap: 0;
+      }
+    }
   </style>
 </head>
 <body>
+  <h1>POC: copy, edit, and paste metadata from re3data v4 into landing-page JSON-LD</h1>
 
-  <h1>POC of Copy, edit, paste when going from re3data v4 metadata to landing page embedded JSON-LD</h1>
-  <p>Repository managers must a) find the re3 identifier for their own repository, like re3data example file: <code>r3d100000001</code> and b) use their browser to 
-  visit the v4.0 API address, like: <code>https://re3data.org</code> (or legacy <code>https://re3data.org</code>). 
-  <strong>STEP 1)</strong> Copy the XML source from the browser (right-click and view source before copying the full XML) and paste it below. 
-  <strong>STEP 2)</strong> Parse XML into the editor and edit or supplement fields. 
-  <strong>STEP 3)</strong> Copy and verify the generated JSON-LD.</p> 
-  <!-- STEP 1: PASTE XML -->
+  <p>
+    Repository managers can a) find the re3data identifier for a repository, such as
+    <code>r3d100000001</code>, and b) use a browser to fetch the v4 API metadata.
+    <strong>Step 1:</strong> paste the raw XML below.
+    <strong>Step 2:</strong> parse and adjust fields.
+    <strong>Step 3:</strong> copy the generated JSON-LD.
+  </p>
+
   <fieldset>
-    <legend>1. Paste Raw re3data v4 XML</legend>
-    <label for="xmlInput">Paste the Raw re3data v4 XML here - replace the example:</label>
+    <legend>1. Paste raw re3data v4 XML</legend>
+    <label for="xmlInput">Paste the raw re3data v4 XML here:</label>
     <textarea id="xmlInput" rows="14"><?xml version="1.0" encoding="utf-8"?>
-<!-- re3data.org Metadata Schema for the Description of Research Data Repositories. Version 4.0, August 2023. https://doi.org/10.48440/re3.014 -->
 <r3d:re3data xmlns:r3d="http://www.re3data.org/schema/4-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.re3data.org/schema/4-0 http://schema.re3data.org/4-0/re3dataV4-0.xsd">
-	<r3d:repository>
-		<r3d:identifiers>
-			<r3d:re3data>r3d100010487</r3d:re3data>
-			<r3d:doi>https://doi.org/10.17616/R3SG7D</r3d:doi>
-		</r3d:identifiers>
-		<r3d:repositoryName language="eng">Slovenian Social Science Data Archives</r3d:repositoryName>
-				<r3d:additionalName language="slv">ADP</r3d:additionalName>
-				<r3d:additionalName language="slv">Arhiv druzboslovnih podatkov</r3d:additionalName>
-				<r3d:repositoryUrl>https://www.adp.fdv.uni-lj.si/en/</r3d:repositoryUrl>
-				<r3d:description language="eng">The Slovenian Social Science Data Archives (Slovenski Arhiv Družboslovnih podatkov - ADP) were established in 1997 as an organizational unit within the Institute of Social Sciences at the Faculty of Social Sciences, University of Ljubljana. Its tasks are to acquire significant data sources within a wide range of social science disciplines of interest to Slovenian social scientists, review and prepare them for digital preservation, and to disseminate them for further scientific, educational and other purposes.</r3d:description>
-				<r3d:repositoryContact>
-			<r3d:repositoryContactInformation>arhiv.podatkov@fdv.uni-lj.si</r3d:repositoryContactInformation>
-			<r3d:repositoryContactType>administrative</r3d:repositoryContactType>
-		</r3d:repositoryContact>
-				<r3d:repositoryContact>
-			<r3d:repositoryContactInformation>https://www.adp.fdv.uni-lj.si/en/contacts/</r3d:repositoryContactInformation>
-			<r3d:repositoryContactType>support</r3d:repositoryContactType>
-		</r3d:repositoryContact>
-						<r3d:type>disciplinary</r3d:type>
-						<r3d:size>3 dataverses, 89 datasets, 438 files</r3d:size>
-						<r3d:startDate>1997</r3d:startDate>
-        									<r3d:repositoryLanguage>eng</r3d:repositoryLanguage>
-					<r3d:repositoryLanguage>slv</r3d:repositoryLanguage>
-							<r3d:subject subjectScheme="DFG">
-				<r3d:subjectId>1</r3d:subjectId>
-				<r3d:subjectName>Humanities and Social Sciences</r3d:subjectName>
-			</r3d:subject>
-					<r3d:subject subjectScheme="DFG">
-				<r3d:subjectId>123</r3d:subjectId>
-				<r3d:subjectName>Social Sciences</r3d:subjectName>
-			</r3d:subject>
-					<r3d:subject subjectScheme="DFG">
-				<r3d:subjectId>12</r3d:subjectId>
-				<r3d:subjectName>Social and Behavioural Sciences</r3d:subjectName>
-			</r3d:subject>
-							<r3d:missionStatementUrl>https://www.adp.fdv.uni-lj.si/en/mission/</r3d:missionStatementUrl>
-							<r3d:contentType contentTypeScheme="COAR">
-				<r3d:contentTypeId>http://purl.org/coar/resource_type/c_ddb1</r3d:contentTypeId>
-				<r3d:contentTypeName>dataset</r3d:contentTypeName>
-			</r3d:contentType>
-					<r3d:contentType contentTypeScheme="COAR">
-				<r3d:contentTypeId>http://purl.org/coar/resource_type/c_1843</r3d:contentTypeId>
-				<r3d:contentTypeName>other</r3d:contentTypeName>
-			</r3d:contentType>
-					<r3d:contentType contentTypeScheme="COAR">
-				<r3d:contentTypeId>http://purl.org/coar/resource_type/c_18cf</r3d:contentTypeId>
-				<r3d:contentTypeName>text</r3d:contentTypeName>
-			</r3d:contentType>
-							<r3d:providerType>dataProvider</r3d:providerType>
-							<r3d:keyword>Slovenia</r3d:keyword>
-					<r3d:keyword>Slovenian social science data</r3d:keyword>
-							<r3d:institution>
-				<r3d:institutionName language="eng">Ministry of Higher Education, Science and Technology</r3d:institutionName>
-									<r3d:institutionAdditionalName language="slv">MVZT</r3d:institutionAdditionalName>
-									<r3d:institutionAdditionalName language="slv">Ministrstvo za visoko šolstvo, znanost in tehnologijo</r3d:institutionAdditionalName>
-								<r3d:institutionCountry>SVN</r3d:institutionCountry>
-									<r3d:responsibilityType>funding</r3d:responsibilityType>
-								<r3d:institutionType>non-profit</r3d:institutionType>
-				<r3d:institutionUrl>http://www.arhiv.mvzt.gov.si/en/</r3d:institutionUrl>
-									<r3d:institutionIdentifier>
-						<r3d:institutionIdentifierType>ROR</r3d:institutionIdentifierType>
-											<r3d:institutionIdentifierUrl>https://ror.org/0452h9305</r3d:institutionIdentifierUrl>
-										</r3d:institutionIdentifier>
-													<r3d:responsibilityStartDate>2004</r3d:responsibilityStartDate>
-											</r3d:institution>
-					<r3d:institution>
-				<r3d:institutionName language="eng">University of Ljubljana, Institute of Social Sciences</r3d:institutionName>
-									<r3d:institutionAdditionalName language="slv">Univerza v Ljubljani, Fakulteta za družbene vede</r3d:institutionAdditionalName>
-								<r3d:institutionCountry>SVN</r3d:institutionCountry>
-									<r3d:responsibilityType>general</r3d:responsibilityType>
-								<r3d:institutionType>non-profit</r3d:institutionType>
-				<r3d:institutionUrl>https://www.fdv.uni-lj.si/en/home</r3d:institutionUrl>
-															</r3d:institution>
-							<r3d:policy>
-				<r3d:policyName>CESSDA Data Access Policy</r3d:policyName>
-				<r3d:policyUrl>https://zenodo.org/records/6722000</r3d:policyUrl>
-			</r3d:policy>
-					<r3d:policy>
-				<r3d:policyName>Policy of digital preservation</r3d:policyName>
-				<r3d:policyUrl>https://www.adp.fdv.uni-lj.si/en/publikacije/digital-preservation-policy-2/</r3d:policyUrl>
-			</r3d:policy>
-						<r3d:databaseAccess>
-			<r3d:databaseAccessType>open</r3d:databaseAccessType>
-					</r3d:databaseAccess>
-							<r3d:dataAccess>
-				<r3d:dataAccessType>restricted</r3d:dataAccessType>
-									<r3d:dataAccessRestriction>registration</r3d:dataAccessRestriction>
-							</r3d:dataAccess>
-							<r3d:dataLicense>
-				<r3d:dataLicenseName>CC</r3d:dataLicenseName>
-				<r3d:dataLicenseUrl>https://creativecommons.org/</r3d:dataLicenseUrl>
-			</r3d:dataLicense>
-					<r3d:dataLicense>
-				<r3d:dataLicenseName>CC0</r3d:dataLicenseName>
-				<r3d:dataLicenseUrl>https://creativecommons.org/publicdomain/zero/1.0/</r3d:dataLicenseUrl>
-			</r3d:dataLicense>
-							<r3d:dataUpload>
-				<r3d:dataUploadType>restricted</r3d:dataUploadType>
-									<r3d:dataUploadRestriction>registration</r3d:dataUploadRestriction>
-							</r3d:dataUpload>
-							<r3d:dataUploadLicense>
-				<r3d:dataUploadLicenseName>Deposit Agreement</r3d:dataUploadLicenseName>
-				<r3d:dataUploadLicenseUrl>https://www.adp.fdv.uni-lj.si/en/deposit-and-publish/</r3d:dataUploadLicenseUrl>
-			</r3d:dataUploadLicense>
-							<r3d:software>Dataverse</r3d:software>
-							<r3d:versioning>yes</r3d:versioning>
-							<r3d:api>
-				<r3d:apiType>OAI-PMH</r3d:apiType>
-				<r3d:apiUrl>https://dataverse.adp.fdv.uni-lj.si/oai?verb=Identify</r3d:apiUrl>
-									<r3d:apiDocumentation>https://guides.dataverse.org/en/latest/admin/discoverability.html</r3d:apiDocumentation>
-							</r3d:api>
-					<r3d:api>
-				<r3d:apiType>OAI-PMH</r3d:apiType>
-				<r3d:apiUrl>https://www.adp.fdv.uni-lj.si/v0/oai?verb=Identify</r3d:apiUrl>
-									<r3d:apiDocumentation>https://www.openarchives.org/OAI/openarchivesprotocol.html</r3d:apiDocumentation>
-							</r3d:api>
-					<r3d:api>
-				<r3d:apiType>REST</r3d:apiType>
-				<r3d:apiUrl>https://dataverse.adp.fdv.uni-lj.si/api/search?q=*&amp;type=dataset&amp;type=file</r3d:apiUrl>
-									<r3d:apiDocumentation>https://guides.dataverse.org/en/latest/api/native-api.html</r3d:apiDocumentation>
-							</r3d:api>
-							<r3d:pidSystem>DOI</r3d:pidSystem>
-									<r3d:metrics>Usage statistics</r3d:metrics>
-							<r3d:citationGuidelineUrl>https://www.adp.fdv.uni-lj.si/en/after-use/</r3d:citationGuidelineUrl>
-									<r3d:enhancedPublication>yes</r3d:enhancedPublication>
-													<r3d:metadataStandard>
-				<r3d:metadataStandardName>DDI (Data Documentation Initiative)</r3d:metadataStandardName>
-				<r3d:metadataStandardUrl>https://rdamsc.bath.ac.uk/msc/m13</r3d:metadataStandardUrl>
-			</r3d:metadataStandard>
-							<r3d:syndication>
-				<r3d:syndicationType>other</r3d:syndicationType>
-				<r3d:syndicationUrl>https://www.adp.fdv.uni-lj.si/en/arhiv-enovic/</r3d:syndicationUrl>
-			</r3d:syndication>
-				<r3d:remarks>For information regarding the deposit of data, contact ADP: https://www.adp.fdv.uni-lj.si/en/contacts/
-ADP is a member organisation of CESSDA ERIC https://www.cessda.eu/
-ADP was CTS certified until 2025-03-07.</r3d:remarks>
-		<r3d:entryDate>2013-08-14</r3d:entryDate>
-		<r3d:lastUpdate>2025-12-11</r3d:lastUpdate>
-	</r3d:repository>
+  <r3d:repository>
+    <r3d:re3data.orgIdentifier>r3d100000001</r3d:re3data.orgIdentifier>
+    <r3d:repositoryName language="eng">Odum Institute Archive Dataverse</r3d:repositoryName>
+    <r3d:additionalName language="eng">Odum Data Archive</r3d:additionalName>
+    <r3d:repositoryURL>https://unc.edu</r3d:repositoryURL>
+    <r3d:repositoryIdentifier>FAIRsharing_doi:10.25504/FAIRsharing.7850c8</r3d:repositoryIdentifier>
+    <r3d:description language="eng">The Odum Institute Archive Dataverse contains social science data curated and archived by the Odum Institute Data Archive at the University of North Carolina at Chapel Hill. Some datasets are restricted to UNC affiliates.</r3d:description>
+    <r3d:repositoryContact>https://atlassian.net</r3d:repositoryContact>
+    <r3d:repositoryContact>odumarchive@unc.edu</r3d:repositoryContact>
+    <r3d:type>disciplinary</r3d:type>
+    <r3d:size updated="2026-01-14">13 dataverses, 3.381 datasets, 25.713 files</r3d:size>
+    <r3d:repositoryLanguage>eng</r3d:repositoryLanguage>
+    <r3d:subject subjectScheme="DFG">1 Humanities and Social Sciences</r3d:subject>
+    <r3d:subject subjectScheme="DFG">111 Social Sciences</r3d:subject>
+    <r3d:subject subjectScheme="DFG">11104 Political Science</r3d:subject>
+    <r3d:missionStatementURL>https://unc.edu</r3d:missionStatementURL>
+    <r3d:contentType>dataset</r3d:contentType>
+    <r3d:contentType>statistical data</r3d:contentType>
+    <r3d:contentType>text</r3d:contentType>
+    <r3d:providerType>dataProvider</r3d:providerType>
+    <r3d:keyword>FAIR</r3d:keyword>
+    <r3d:keyword>demography</r3d:keyword>
+    <r3d:keyword>election</r3d:keyword>
+    <r3d:institution>
+      <r3d:institutionName language="eng">Odum Institute for Research in Social Science</r3d:institutionName>
+      <r3d:institutionCountry>USA</r3d:institutionCountry>
+      <r3d:responsibilityType>general</r3d:responsibilityType>
+      <r3d:institutionType>non-profit</r3d:institutionType>
+      <r3d:institutionURL>https://unc.edu</r3d:institutionURL>
+    </r3d:institution>
+    <r3d:institution>
+      <r3d:institutionName language="eng">University of North Carolina at Chapel Hill</r3d:institutionName>
+      <r3d:institutionAdditionalName language="eng">UNC</r3d:institutionAdditionalName>
+      <r3d:institutionCountry>USA</r3d:institutionCountry>
+      <r3d:responsibilityType>general</r3d:responsibilityType>
+      <r3d:institutionType>non-profit</r3d:institutionType>
+      <r3d:institutionURL>https://unc.edu</r3d:institutionURL>
+      <r3d:institutionIdentifier>ROR:0130frc33</r3d:institutionIdentifier>
+    </r3d:institution>
+    <r3d:policy>
+      <r3d:policyName>Collection Development Policy</r3d:policyName>
+      <r3d:policyURL>https://unc.edu</r3d:policyURL>
+    </r3d:policy>
+    <r3d:databaseAccess>
+      <r3d:databaseAccessType>open</r3d:databaseAccessType>
+    </r3d:databaseAccess>
+    <r3d:databaseLicense>
+      <r3d:databaseLicenseName>CC0</r3d:databaseLicenseName>
+      <r3d:databaseLicenseURL>https://creativecommons.org</r3d:databaseLicenseURL>
+    </r3d:databaseLicense>
+    <r3d:dataAccess>
+      <r3d:dataAccessType>open</r3d:dataAccessType>
+    </r3d:dataAccess>
+    <r3d:dataAccess>
+      <r3d:dataAccessType>restricted</r3d:dataAccessType>
+      <r3d:dataAccessRestriction>institutional membership</r3d:dataAccessRestriction>
+    </r3d:dataAccess>
+    <r3d:dataLicense>
+      <r3d:dataLicenseName>CC0</r3d:dataLicenseName>
+      <r3d:dataLicenseURL>https://creativecommons.org</r3d:dataLicenseURL>
+    </r3d:dataLicense>
+    <r3d:software>
+      <r3d:softwareName>Dataverse</r3d:softwareName>
+    </r3d:software>
+    <r3d:api apiType="OAI-PMH">https://unc.edu</r3d:api>
+    <r3d:pidSystem>DOI</r3d:pidSystem>
+    <r3d:aidSystem>ORCID</r3d:aidSystem>
+    <r3d:qualityManagement>yes</r3d:qualityManagement>
+    <r3d:qualityManagementMeasure>Automated metadata validation</r3d:qualityManagementMeasure>
+    <r3d:certificate>CoreTrustSeal</r3d:certificate>
+    <r3d:metadataStandard>
+      <r3d:metadataStandardName metadataStandardScheme="DCC">DDI - Data Documentation Initiative</r3d:metadataStandardName>
+      <r3d:metadataStandardURL>http://dcc.ac.uk</r3d:metadataStandardURL>
+    </r3d:metadataStandard>
+    <r3d:fundingInformation>
+      <r3d:funderName>National Science Foundation</r3d:funderName>
+      <r3d:funderIdentifier>ROR:021nxhr62</r3d:funderIdentifier>
+    </r3d:fundingInformation>
+    <r3d:relatedRepository>
+      <r3d:relatedRepositoryName>UNC Dataverse</r3d:relatedRepositoryName>
+      <r3d:relatedRepositoryIdentifier>r3d100010531</r3d:relatedRepositoryIdentifier>
+    </r3d:relatedRepository>
+    <r3d:remarks>Odum Dataverse is covered by Thomson Reuters Data Citation Index.</r3d:remarks>
+    <r3d:entryDate>2013-06-10</r3d:entryDate>
+    <r3d:lastUpdate>2026-01-14</r3d:lastUpdate>
+  </r3d:repository>
 </r3d:re3data></textarea>
-    <button type="button" onclick="parseXmlToForm()">Parse XML into Editor</button>
+    <button type="button" onclick="parseXmlToForm()">Parse XML into editor</button>
   </fieldset>
-  <!-- STEP 2: EDIT & SUPPLEMENT -->
-  <fieldset id="editorForm">
-    <legend>2. Edit Harvested Metadata &amp; Supplement</legend>
 
-    <h3>Core Identity &amp; Dates</h3>
+  <fieldset id="editorForm">
+    <legend>2. Edit harvested metadata &amp; supplement</legend>
+
+    <h3>Core identity &amp; dates</h3>
     <div class="row">
       <div>
         <label for="catId">Catalog URI (@id)</label>
-        <input type="url" id="catId">
+        <input type="url" id="catId" />
       </div>
       <div>
-        <label for="r3dIdentifier">re3data Identifier (identifier)</label>
-        <input type="text" id="r3dIdentifier">
+        <label for="r3dIdentifier">re3data identifier (identifier)</label>
+        <input type="text" id="r3dIdentifier" />
       </div>
     </div>
 
     <div class="row">
       <div>
-        <label for="catName">Catalog Name (name)</label>
-        <input type="text" id="catName">
+        <label for="catName">Catalog name (name)</label>
+        <input type="text" id="catName" />
       </div>
       <div>
-        <label for="catAltName">Additional Name (alternateName - comma-separated, v4.0)</label>
-        <input type="text" id="catAltName">
+        <label for="catAltName">Additional name (alternateName, comma-separated)</label>
+        <input type="text" id="catAltName" />
       </div>
     </div>
 
     <div class="row">
       <div>
         <label for="catUrl">Repository URL (url)</label>
-        <input type="url" id="catUrl">
+        <input type="url" id="catUrl" />
       </div>
       <div>
-        <label for="catExtraIds">Additional Repository Identifiers (v4.0 - comma-separated)</label>
-        <input type="text" id="catExtraIds" placeholder="e.g., FAIRsharing_doi:10.25504/...">
+        <label for="catExtraIds">Additional repository identifiers (comma-separated)</label>
+        <input type="text" id="catExtraIds" placeholder="e.g., FAIRsharing_doi:10.25504/FAIRsharing.7850c8" />
       </div>
     </div>
 
     <div class="row">
       <div>
-        <label for="catDatePublished">Entry Date (datePublished)</label>
-        <input type="date" id="catDatePublished">
+        <label for="catDatePublished">Entry date (datePublished)</label>
+        <input type="date" id="catDatePublished" />
       </div>
       <div>
-        <label for="catDateModified">Last Update (dateModified)</label>
-        <input type="date" id="catDateModified">
+        <label for="catDateModified">Last update (dateModified)</label>
+        <input type="date" id="catDateModified" />
       </div>
       <div>
         <label for="catLang">Languages (inLanguage, comma-separated)</label>
-        <input type="text" id="catLang" placeholder="e.g., en, no, de">
+        <input type="text" id="catLang" placeholder="e.g., en, no, de" />
       </div>
     </div>
 
     <label for="catDesc">Description (description)</label>
     <textarea id="catDesc" rows="3"></textarea>
 
-    <h3>Subjects, Keywords &amp; Formats</h3>
-    <label for="catSubjects">Subjects (about - DefinedTerm, one per line: Scheme | Subject)</label>
+    <h3>Subjects, keywords &amp; formats</h3>
+    <label for="catSubjects">Subjects (about - one per line: Scheme | Subject)</label>
     <textarea id="catSubjects" rows="4"></textarea>
 
     <label for="catKeywords">Keywords (keywords - comma-separated)</label>
-    <input type="text" id="catKeywords">
+    <input type="text" id="catKeywords" />
 
     <div class="row">
       <div>
-        <label for="catContentTypes">Content Types / COAR v3.1 (encodingFormat - comma-separated)</label>
-        <input type="text" id="catContentTypes">
+        <label for="catContentTypes">Content types / COAR v3.1 (encodingFormat - comma-separated)</label>
+        <input type="text" id="catContentTypes" />
       </div>
       <div>
-        <label for="catPidSystems">PID Systems (additionalProperty: pidSystem)</label>
-        <input type="text" id="catPidSystems">
+        <label for="catPidSystems">PID systems (additionalProperty: pidSystem)</label>
+        <input type="text" id="catPidSystems" />
       </div>
       <div>
-        <label for="catAidSystems">Author ID Systems (additionalProperty: aidSystem, v4.0)</label>
-        <input type="text" id="catAidSystems" placeholder="e.g., ORCID">
+        <label for="catAidSystems">Author ID systems (additionalProperty: aidSystem)</label>
+        <input type="text" id="catAidSystems" placeholder="e.g., ORCID" />
       </div>
     </div>
-    <h3>Providers, Institutions &amp; Funders</h3>
-    <label for="catProviders">Institutions <span class="hint">(One per line: Name | URL | Country | ROR/Identifier | Responsibility)</span></label>
+
+    <h3>Providers, institutions &amp; funders</h3>
+    <label for="catProviders">Institutions <span class="hint">(One per line: Name | URL | Country | Identifier | Responsibility)</span></label>
     <textarea id="catProviders" rows="3"></textarea>
 
-    <label for="catFunders">Funding Information (funder - v4.0 / Supplement <span class="hint">One per line: Funder Name | Funder Identifier e.g. ROR</span>)</label>
+    <label for="catFunders">Funding information <span class="hint">(One per line: Funder Name | Funder Identifier, e.g. ROR)</span></label>
     <textarea id="catFunders" rows="2"></textarea>
 
-    <h3>Access, Licenses &amp; Policies</h3>
+    <h3>Access, licenses &amp; policies</h3>
     <div class="row">
       <div>
         <label for="catLicenses">Licenses (license - comma-separated URLs)</label>
-        <input type="text" id="catLicenses">
+        <input type="text" id="catLicenses" />
       </div>
       <div>
-        <label for="catAccess">Access Types (conditionsOfAccess)</label>
-        <input type="text" id="catAccess">
+        <label for="catAccess">Access types (conditionsOfAccess)</label>
+        <input type="text" id="catAccess" />
       </div>
     </div>
 
-    <label for="catPolicies">Policies &amp; Guidelines (publishingPrinciples - one per line: Name | URL)</label>
+    <label for="catPolicies">Policies &amp; guidelines <span class="hint">(one per line: Name | URL)</span></label>
     <textarea id="catPolicies" rows="3"></textarea>
 
-    <h3>Contacts, APIs, Software &amp; Standards</h3>
+    <h3>Contacts, APIs, software &amp; standards</h3>
     <div class="row">
       <div>
         <label for="catContacts">Contacts (contactPoint - comma-separated emails/URLs)</label>
-        <input type="text" id="catContacts">
+        <input type="text" id="catContacts" />
       </div>
       <div>
-        <label for="catSoftware">Repository Software (additionalProperty: software)</label>
-        <input type="text" id="catSoftware">
+        <label for="catSoftware">Repository software (additionalProperty: software)</label>
+        <input type="text" id="catSoftware" />
       </div>
     </div>
 
-    <label for="catApis">APIs &amp; Syndications (distribution - one per line: Type | URL)</label>
+    <label for="catApis">APIs &amp; syndications <span class="hint">(one per line: Type | URL)</span></label>
     <textarea id="catApis" rows="2"></textarea>
 
-    <label for="catStandards">Metadata Standards (additionalProperty: metadataStandard - one per line: Name | URL)</label>
+    <label for="catStandards">Metadata standards <span class="hint">(one per line: Name | URL)</span></label>
     <textarea id="catStandards" rows="3"></textarea>
 
-    <h3>Quality, Relations &amp; Additional Context</h3>
+    <h3>Quality, relations &amp; additional context</h3>
     <div class="row">
       <div>
-        <label for="catCertificates">Certificates (additionalProperty: certificate - comma-separated, v4.0)</label>
-        <input type="text" id="catCertificates" placeholder="e.g., CoreTrustSeal">
+        <label for="catCertificates">Certificates (additionalProperty: certificate)</label>
+        <input type="text" id="catCertificates" placeholder="e.g., CoreTrustSeal" />
       </div>
       <div>
-        <label for="catQualityMeasures">Quality Management Measures (v4.0 - comma-separated)</label>
-        <input type="text" id="catQualityMeasures">
+        <label for="catQualityMeasures">Quality management measures</label>
+        <input type="text" id="catQualityMeasures" />
       </div>
     </div>
 
-    <label for="catRelatedRepos">Related Repositories (isPartOf - v4.0 <span class="hint">One per line: Repository Name | Identifier/URL</span>)</label>
+    <label for="catRelatedRepos">Related repositories <span class="hint">(one per line: Name | Identifier/URL)</span></label>
     <textarea id="catRelatedRepos" rows="2"></textarea>
 
     <div class="row">
       <div>
-        <label for="catSize">Repository Size (additionalProperty: size)</label>
-        <input type="text" id="catSize">
+        <label for="catSize">Repository size (additionalProperty: size)</label>
+        <input type="text" id="catSize" />
       </div>
       <div>
-        <label for="catRepoType">Repository &amp; Provider Type (additionalType)</label>
-        <input type="text" id="catRepoType">
+        <label for="catRepoType">Repository/provider type (additionalType)</label>
+        <input type="text" id="catRepoType" />
       </div>
     </div>
 
-    <label for="catRemarks">Remarks / Certifications (comment)</label>
+    <label for="catRemarks">Remarks / certifications (comment)</label>
     <textarea id="catRemarks" rows="2"></textarea>
 
     <button type="button" onclick="generateJsonLd()">Generate JSON-LD</button>
   </fieldset>
 
-  <!-- STEP 3: GENERATE & EMBED -->
   <fieldset>
-    <legend>3. Generated HTML-Embedded JSON-LD</legend>
-    <p style="font-size: 0.85rem; color: #555;">This script block is dynamically injected into this page's <code>&lt;head&gt;</code> and updates live when you edit fields above.</p>
+    <legend>3. Generated HTML-embedded JSON-LD</legend>
+    <p>This script block is dynamically injected into the page head and updates live as you edit fields.</p>
     <textarea id="jsonLdOutput" rows="24" readonly></textarea>
-    <button type="button" class="secondary" onclick="copyJsonLd()">Copy JSON-LD Snippet</button>
-    <span id="copyFeedback" style="margin-left: 0.75rem; font-size: 0.85rem; color: #2e7d32; font-weight: bold;"></span>
+    <button type="button" class="secondary" onclick="copyJsonLd()">Copy JSON-LD snippet</button>
+    <span id="copyFeedback"></span>
   </fieldset>
+
   <script>
-    // Helper: Safely extract text regardless of XML namespace prefix or dots in tag names
-    function xmlLocalName(node) {
-      if (!node) return "";
-      return (node.localName || (node.nodeName || "").replace(/^.*:/, "")).trim();
+    function getXmlElements(parent, localName) {
+      if (!parent) return [];
+      const nsMatches = Array.from(parent.getElementsByTagNameNS("*", localName));
+      if (nsMatches.length) return nsMatches;
+      return Array.from(parent.getElementsByTagName("*")).filter(el => el.localName === localName);
     }
 
-    function matchesXmlName(node, candidate) {
-      if (!node || !candidate) return false;
-      const local = xmlLocalName(node);
-      const value = String(candidate).trim();
-      if (!local || !value) return false;
-      return local === value ||
-             local === value.replace(/:/g, "") ||
-             local.endsWith("." + value) ||
-             local.endsWith(":" + value) ||
-             local.endsWith(value);
+    function getXmlText(parent, localName) {
+      const matches = getXmlElements(parent, localName);
+      return matches.length ? matches[0].textContent.trim() : "";
     }
 
-    function getFirstMatchingNode(parent, candidates) {
-      const names = (Array.isArray(candidates) ? candidates : [candidates])
-        .flatMap(v => String(v).split("|"))
-        .map(v => v.trim())
+    function getXmlAllText(parent, localName) {
+      return getXmlElements(parent, localName)
+        .map(el => el.textContent.trim())
         .filter(Boolean);
-
-      if (!parent || !names.length) return null;
-      const queue = [parent];
-
-      while (queue.length) {
-        const node = queue.shift();
-        if (!node || node.nodeType !== 1) continue;
-
-        for (const name of names) {
-          if (matchesXmlName(node, name)) return node;
-        }
-
-        for (const child of node.children || []) { queue.push(child); }
-      }
-      return null;
     }
 
-    function getXmlText(parent, candidates) {
-      const node = getFirstMatchingNode(parent, candidates);
-      return node ? node.textContent.trim() : "";
-    }
-
-    function getXmlAllText(parent, candidates) {
-      const names = (Array.isArray(candidates) ? candidates : [candidates])
-        .flatMap(v => String(v).split("|"))
-        .map(v => v.trim())
-        .filter(Boolean);
-
-      if (!parent || !names.length) return [];
-      const matches = [];
-      const queue = [parent];
-
-      while (queue.length) {
-        const node = queue.shift();
-        if (!node || node.nodeType !== 1) continue;
-
-        for (const name of names) {
-          if (matchesXmlName(node, name)) {
-            const text = (node.textContent || "").trim();
-            if (text) matches.push(text);
-            break;
-          }
-        }
-
-        for (const child of node.children || []) { queue.push(child); }
-      }
-
-      return Array.from(new Set(matches));
-    }
-
-    function getTextFromPath(root, path) {
-      if (!root || !Array.isArray(path) || !path.length) return "";
-      let current = root;
-      for (const segment of path) {
-        if (!current) return "";
-        current = getFirstMatchingNode(current, segment);
-      }
-      return current ? (current.textContent || "").trim() : "";
-    }
-
-    function firstNonEmpty(...values) {
-      for (const value of values) {
-        if (value !== null && value !== undefined && String(value).trim() !== "") {
-          return String(value).trim();
-        }
-      }
-      return "";
-    }
-
-    // Helper: Map ISO 639-2/3 from re3data (e.g., 'eng') to BCP 47 / ISO 639-1 ('en')
     function normalizeLang(code) {
-      const map = { eng: "en", nor: "no", nob: "nb", nno: "nn", deu: "de", ger: "de", fra: "fr", fre: "fr", spa: "es", swe: "sv", dan: "da" };
+      const map = {
+        eng: "en",
+        nor: "no",
+        nob: "nb",
+        nno: "nn",
+        deu: "de",
+        ger: "de",
+        fra: "fr",
+        fre: "fr",
+        spa: "es",
+        swe: "sv",
+        dan: "da",
+        ita: "it",
+        nld: "nl",
+        fin: "fi",
+        por: "pt"
+      };
       const clean = String(code || "").toLowerCase().trim();
       return map[clean] || clean;
     }
@@ -438,158 +456,184 @@ ADP was CTS certified until 2025-03-07.</r3d:remarks>
     function formatRe3dataUrl(id) {
       const clean = String(id || "").trim();
       if (!clean) return "";
-      return `https://www.re3data.org/repository/${clean.replace(/^\/+/, "")}`;
+      return "https://www.re3data.org/repository/" + clean.replace(/^\/+/, "");
     }
 
     function formatRorUrl(id) {
-      const clean = String(id || "").trim().replace(/^ROR:/i, "");
+      const clean = String(id || "").trim().replace(/^ROR:/i, "").replace(/^\/+/, "");
       if (!clean) return "";
-      return `https://ror.org/${clean.replace(/^\/+/, "")}`;
+      return "https://ror.org/" + clean;
     }
 
-    // 2. Parse XML into Form Fields (Supports re3data v4.0 + v2.2/v3.x backward compatibility)
+    function splitCsv(inputId) {
+      const value = document.getElementById(inputId).value || "";
+      return value.split(",").map(s => s.trim()).filter(Boolean);
+    }
+
+    function splitPipeLine(line) {
+      const trimmed = String(line || "").trim();
+      if (!trimmed) return ["", ""];
+      const idx = trimmed.indexOf("|");
+      if (idx === -1) return [trimmed, ""];
+      return [trimmed.slice(0, idx).trim(), trimmed.slice(idx + 1).trim()];
+    }
+
+    function singleOrArray(arr) {
+      if (!Array.isArray(arr)) return arr;
+      if (arr.length === 0) return undefined;
+      if (arr.length === 1) return arr[0];
+      return arr;
+    }
+
+    function clearForm() {
+      const ids = [
+        "catId", "r3dIdentifier", "catName", "catAltName", "catUrl", "catExtraIds",
+        "catDatePublished", "catDateModified", "catLang", "catDesc",
+        "catSubjects", "catKeywords", "catContentTypes", "catPidSystems", "catAidSystems",
+        "catProviders", "catFunders", "catLicenses", "catAccess", "catPolicies",
+        "catContacts", "catSoftware", "catApis", "catStandards",
+        "catCertificates", "catQualityMeasures", "catRelatedRepos",
+        "catSize", "catRepoType", "catRemarks", "jsonLdOutput"
+      ];
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+    }
+
     function parseXmlToForm() {
       const xmlString = document.getElementById("xmlInput").value.trim();
+      if (!xmlString) {
+        clearForm();
+        return;
+      }
+
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(xmlString, "application/xml");
 
       if (xmlDoc.querySelector("parsererror")) {
-        alert("Invalid XML format. Please check that you pasted the complete XML source.");
+        alert("Invalid XML. Please paste the complete XML source from the re3data API.");
         return;
       }
 
-      const repoNode = xmlDoc.getElementsByTagNameNS("*", "repository").item(0) || xmlDoc.documentElement;
+      const repoNode = getXmlElements(xmlDoc.documentElement, "repository")[0] || xmlDoc.documentElement;
 
-      const r3dId = firstNonEmpty(
-        getTextFromPath(repoNode, ["identifiers", "re3data"]),
-        getXmlText(repoNode, ["re3data.orgIdentifier", "re3dataIdentifier", "re3data", "repositoryId", "repositoryIdentifier", "identifier"]),
-        getTextFromPath(repoNode, ["repositoryIdentifier", "value"]),
-        getTextFromPath(repoNode, ["identifiers", "repositoryIdentifier", "value"])
-      );
+      const r3dId = getXmlText(repoNode, "re3data.orgIdentifier");
+      const repoName = getXmlText(repoNode, "repositoryName");
+      const repoUrl = getXmlText(repoNode, "repositoryURL");
+      const repoDescription = getXmlText(repoNode, "description");
+      const repoEntryDate = getXmlText(repoNode, "entryDate");
+      const repoLastUpdate = getXmlText(repoNode, "lastUpdate");
+      const repoLanguages = getXmlAllText(repoNode, "repositoryLanguage").map(normalizeLang);
 
       document.getElementById("r3dIdentifier").value = r3dId;
       document.getElementById("catId").value = formatRe3dataUrl(r3dId);
+      document.getElementById("catName").value = repoName;
+      document.getElementById("catAltName").value = getXmlAllText(repoNode, "additionalName").join(", ");
+      document.getElementById("catUrl").value = repoUrl;
+      document.getElementById("catExtraIds").value = getXmlAllText(repoNode, "repositoryIdentifier").join(", ");
+      document.getElementById("catDatePublished").value = repoEntryDate;
+      document.getElementById("catDateModified").value = repoLastUpdate || new Date().toISOString().slice(0, 10);
+      document.getElementById("catLang").value = repoLanguages.length ? repoLanguages.join(", ") : "en";
+      document.getElementById("catDesc").value = repoDescription;
 
-      document.getElementById("catName").value = firstNonEmpty(
-        getXmlText(repoNode, ["repositoryName", "repositoryNameValue", "name"]),
-        getTextFromPath(repoNode, ["repositoryInfo", "repositoryName"])
-      );
-      document.getElementById("catAltName").value = getXmlAllText(repoNode, ["additionalName", "additionalNames", "alternateName", "alternativeName"]).join(", ");
-      document.getElementById("catUrl").value = firstNonEmpty(
-        getXmlText(repoNode, ["repositoryURL", "repositoryUrl", "url"]),
-        getTextFromPath(repoNode, ["repositoryInfo", "repositoryUrl"])
-      );
-      document.getElementById("catExtraIds").value = getXmlAllText(repoNode, ["repositoryIdentifier", "repositoryIdentifierValue", "identifier"]).join(", ");
-      document.getElementById("catDesc").value = firstNonEmpty(
-        getXmlText(repoNode, ["description", "descriptionText"]),
-        getTextFromPath(repoNode, ["description", "text"])
-      );
-      document.getElementById("catDatePublished").value = getXmlText(repoNode, ["entryDate", "entrydate", "dateCreated"]);
-      document.getElementById("catDateModified").value = firstNonEmpty(
-        getXmlText(repoNode, ["lastUpdate", "lastUpdated", "updated" ]),
-        new Date().toISOString().slice(0, 10)
-      );
+      const subjectLines = getXmlElements(repoNode, "subject").map(node => {
+        const scheme = node.getAttribute("subjectScheme") || "";
+        const value = node.textContent.trim();
+        return scheme ? `${scheme} | ${value}` : value;
+      });
+      document.getElementById("catSubjects").value = subjectLines.join("\n");
 
-      const langs = getXmlAllText(repoNode, ["repositoryLanguage", "language", "inLanguage"]).map(normalizeLang);
-      document.getElementById("catLang").value = langs.length ? langs.join(", ") : "en";
+      document.getElementById("catKeywords").value = getXmlAllText(repoNode, "keyword").join(", ");
+      document.getElementById("catContentTypes").value = getXmlAllText(repoNode, "contentType").join(", ");
+      document.getElementById("catPidSystems").value = getXmlAllText(repoNode, "pidSystem").join(", ");
+      document.getElementById("catAidSystems").value = getXmlAllText(repoNode, "aidSystem").join(", ");
 
-      const subjectNodes = Array.from(repoNode.getElementsByTagNameNS("*", "subject"));
-      document.getElementById("catSubjects").value = subjectNodes.map(n => {
-        const scheme = n.getAttribute("subjectScheme") || n.getAttribute("scheme") || "";
-        return `${scheme} | ${n.textContent.trim()}`;
-      }).join("\n");
+      const institutionLines = getXmlElements(repoNode, "institution").map(inst => {
+        const name = getXmlText(inst, "institutionName");
+        const url = getXmlText(inst, "institutionURL");
+        const country = getXmlText(inst, "institutionCountry");
+        const id = getXmlText(inst, "institutionIdentifier");
+        const resp = getXmlAllText(inst, "responsibilityType").join(",");
+        return [name, url, country, id, resp].join(" | ");
+      });
+      document.getElementById("catProviders").value = institutionLines.join("\n");
 
-      document.getElementById("catKeywords").value = getXmlAllText(repoNode, ["keyword", "keywords"]).join(", ");
-      document.getElementById("catContentTypes").value = getXmlAllText(repoNode, ["contentType", "contentTypeName", "type"]).join(", ");
-      document.getElementById("catPidSystems").value = getXmlAllText(repoNode, ["pidSystem", "persistentIdentifierSystem"]).join(", ");
-      document.getElementById("catAidSystems").value = getXmlAllText(repoNode, ["aidSystem", "authorIdentifierSystem"]).join(", ");
+      const funderLines = getXmlElements(repoNode, "fundingInformation").map(f => {
+        const name = getXmlText(f, "funderName");
+        const id = getXmlText(f, "funderIdentifier");
+        return id ? `${name} | ${id}` : name;
+      });
+      document.getElementById("catFunders").value = funderLines.join("\n");
 
-      const instNodes = Array.from(repoNode.getElementsByTagNameNS("*", "institution"));
-      document.getElementById("catProviders").value = instNodes.map(inst => {
-        const name = firstNonEmpty(getXmlText(inst, ["institutionName", "institutionNameValue", "name"]), getXmlText(inst, ["name"]));
-        const url = firstNonEmpty(getXmlText(inst, ["institutionURL", "institutionUrl", "url"]), getTextFromPath(inst, ["institution", "url"]));
-        const country = getXmlText(inst, ["institutionCountry", "country"]);
-        const id = getXmlText(inst, ["institutionIdentifier", "institutionIdentifierValue", "identifier"]);
-        const resp = getXmlAllText(inst, ["responsibilityType", "responsibility"]).join(", ");
-        return `${name} | ${url} | ${country} | ${id} | ${resp}`;
-      }).join("\n");
-
-      const funderNodes = Array.from(repoNode.getElementsByTagNameNS("*", "fundingInformation"));
-      document.getElementById("catFunders").value = funderNodes.map(f => {
-        const fName = getXmlText(f, ["funderName", "name"]);
-        const fId = getXmlText(f, ["funderIdentifier", "identifier"]);
-        return fId ? `${fName} | ${fId}` : fName;
-      }).join("\n");
-
-      const licenseUrls = Array.from(new Set([
-        ...getXmlAllText(repoNode, ["dataLicenseURL", "dataLicenseUrl", "databaseLicenseURL", "databaseLicenseUrl"]),
-        ...getXmlAllText(repoNode, ["dataLicense", "databaseLicense"]).map(v => v.includes("http") ? v : "")
-      ].filter(Boolean)));
+      const licenseUrls = [
+        ...getXmlAllText(repoNode, "dataLicenseURL"),
+        ...getXmlAllText(repoNode, "databaseLicenseURL")
+      ].filter((value, index, arr) => arr.indexOf(value) === index);
       document.getElementById("catLicenses").value = licenseUrls.join(", ");
 
-      const dbAccess = getXmlAllText(repoNode, ["databaseAccessType", "databaseAccess"]).map(t => `database:${t}`);
-      const dataAccess = getXmlAllText(repoNode, ["dataAccessType", "dataAccess"]).map(t => `data:${t}`);
+      const dbAccess = getXmlAllText(repoNode, "databaseAccessType").map(v => `database:${v}`);
+      const dataAccess = getXmlAllText(repoNode, "dataAccessType").map(v => `data:${v}`);
       document.getElementById("catAccess").value = [...dbAccess, ...dataAccess].join(", ");
 
-      const policies = [];
-      const missionUrl = getXmlText(repoNode, ["missionStatementURL", "missionStatementUrl", "missionUrl"]);
-      if (missionUrl) policies.push(`Mission Statement | ${missionUrl}`);
-      const citationUrl = getXmlText(repoNode, ["citationGuidelineURL", "citationGuidelineUrl", "citationUrl"]);
-      if (citationUrl) policies.push(`Citation Guidelines | ${citationUrl}`);
+      const policyLines = [];
+      const mission = getXmlText(repoNode, "missionStatementURL");
+      if (mission) policyLines.push(`Mission Statement | ${mission}`);
 
-      Array.from(repoNode.getElementsByTagNameNS("*", "policy")).forEach(p => {
-        const policyName = getXmlText(p, ["policyName", "name"]);
-        const policyUrl = getXmlText(p, ["policyURL", "policyUrl", "url"]);
-        if (policyName || policyUrl) policies.push(`${policyName} | ${policyUrl}`);
+      const citation = getXmlText(repoNode, "citationGuidelineURL");
+      if (citation) policyLines.push(`Citation Guidelines | ${citation}`);
+
+      getXmlElements(repoNode, "policy").forEach(policy => {
+        const name = getXmlText(policy, "policyName");
+        const url = getXmlText(policy, "policyURL");
+        if (name || url) policyLines.push(`${name} | ${url}`);
       });
-      document.getElementById("catPolicies").value = policies.join("\n");
 
-      document.getElementById("catContacts").value = getXmlAllText(repoNode, ["repositoryContact", "contact"]).join(", ");
-      document.getElementById("catSoftware").value = getXmlAllText(repoNode, ["softwareName", "software"]).join(", ");
+      document.getElementById("catPolicies").value = policyLines.join("\n");
 
-      const apiNodes = Array.from(repoNode.getElementsByTagNameNS("*", "api"));
-      const apis = apiNodes.map(a => {
-        const type = a.getAttribute("apiType") || a.getAttribute("type") || "API";
-        return `${type} | ${a.textContent.trim()}`;
+      document.getElementById("catContacts").value = getXmlAllText(repoNode, "repositoryContact").join(", ");
+      document.getElementById("catSoftware").value = getXmlAllText(repoNode, "softwareName").join(", ");
+
+      const apiLines = getXmlElements(repoNode, "api").map(node => {
+        const type = node.getAttribute("apiType") || "API";
+        return `${type} | ${node.textContent.trim()}`;
       });
-      const syndNodes = Array.from(repoNode.getElementsByTagNameNS("*", "syndication"));
-      const synds = syndNodes.map(s => {
-        const type = s.getAttribute("syndicationType") || s.getAttribute("type") || "Syndication";
-        return `${type} | ${s.textContent.trim()}`;
+
+      const syndicationLines = getXmlElements(repoNode, "syndication").map(node => {
+        const type = node.getAttribute("syndicationType") || "Syndication";
+        return `${type} | ${node.textContent.trim()}`;
       });
-      document.getElementById("catApis").value = [...apis, ...synds].join("\n");
 
-      const stdNodes = Array.from(repoNode.getElementsByTagNameNS("*", "metadataStandard"));
-      document.getElementById("catStandards").value = stdNodes.map(s => {
-        return `${getXmlText(s, ["metadataStandardName", "name"])} | ${getXmlText(s, ["metadataStandardURL", "metadataStandardUrl", "url"])} `;
-      }).join("\n").trim();
+      document.getElementById("catApis").value = [...apiLines, ...syndicationLines].join("\n");
 
-      document.getElementById("catCertificates").value = getXmlAllText(repoNode, ["certificate", "certification"]).join(", ");
-      document.getElementById("catQualityMeasures").value = getXmlAllText(repoNode, ["qualityManagementMeasure", "qualityMeasure"]).join(", ");
+      const standardLines = getXmlElements(repoNode, "metadataStandard").map(node => {
+        const name = getXmlText(node, "metadataStandardName");
+        const url = getXmlText(node, "metadataStandardURL");
+        return `${name} | ${url}`;
+      });
+      document.getElementById("catStandards").value = standardLines.join("\n");
 
-      const relRepoNodes = Array.from(repoNode.getElementsByTagNameNS("*", "relatedRepository"));
-      document.getElementById("catRelatedRepos").value = relRepoNodes.map(r => {
-        const rName = getXmlText(r, ["relatedRepositoryName", "name"]);
-        const rId = getXmlText(r, ["relatedRepositoryIdentifier", "identifier", "repositoryIdentifier"]);
-        return rId ? `${rName} | ${rId}` : rName;
-      }).join("\n");
+      document.getElementById("catCertificates").value = getXmlAllText(repoNode, "certificate").join(", ");
+      document.getElementById("catQualityMeasures").value = getXmlAllText(repoNode, "qualityManagementMeasure").join(", ");
 
-      document.getElementById("catSize").value = getXmlText(repoNode, ["size", "repositorySize"]);
-      const repoTypes = [...getXmlAllText(repoNode, ["type", "repositoryType"]), ...getXmlAllText(repoNode, ["providerType", "providerTypeName"])];
+      const relatedRepoLines = getXmlElements(repoNode, "relatedRepository").map(node => {
+        const name = getXmlText(node, "relatedRepositoryName");
+        const id = getXmlText(node, "relatedRepositoryIdentifier");
+        return id ? `${name} | ${id}` : name;
+      });
+      document.getElementById("catRelatedRepos").value = relatedRepoLines.join("\n");
+
+      document.getElementById("catSize").value = getXmlText(repoNode, "size");
+      const repoTypes = [
+        ...getXmlAllText(repoNode, "type"),
+        ...getXmlAllText(repoNode, "providerType")
+      ];
       document.getElementById("catRepoType").value = repoTypes.join(", ");
-      document.getElementById("catRemarks").value = getXmlText(repoNode, ["remarks", "comment"]);
+      document.getElementById("catRemarks").value = getXmlText(repoNode, "remarks");
 
       generateJsonLd();
     }
-    // Helper: Split comma-separated string cleanly
-    function splitCsv(id) {
-      return document.getElementById(id).value
-        .split(",")
-        .map(s => s.trim())
-        .filter(Boolean);
-    }
 
-    // 3. Build Comprehensive Schema.org DataCatalog JSON-LD
     function generateJsonLd() {
       const altNames = splitCsv("catAltName");
       const keywords = splitCsv("catKeywords");
@@ -598,175 +642,211 @@ ADP was CTS certified until 2025-03-07.</r3d:remarks>
       const licenses = splitCsv("catLicenses");
       const accessTypes = splitCsv("catAccess");
 
-      // Parse Subjects -> schema:about (DefinedTerm)
-      const about = document.getElementById("catSubjects").value
-        .split("\n")
+      const about = (document.getElementById("catSubjects").value || "")
+        .split(/\r?\n/)
         .map(line => line.trim())
         .filter(Boolean)
         .map(line => {
-          const [scheme, name] = line.split("|").map(s => s.trim());
+          const [scheme, name] = splitPipeLine(line);
           return {
             "@type": "DefinedTerm",
-            "name": name || scheme,
-            "inDefinedTermSet": name && scheme ? scheme : undefined
+            name: name || scheme || "",
+            ...(name && scheme ? { inDefinedTermSet: scheme } : {})
           };
         });
 
-      // Parse Providers -> schema:provider (Organization[])
-      const providers = document.getElementById("catProviders").value
-        .split("\n")
+      const providers = (document.getElementById("catProviders").value || "")
+        .split(/\r?\n/)
         .map(line => line.trim())
         .filter(Boolean)
         .map(line => {
           const [name, url, country, rawId, resp] = line.split("|").map(s => s.trim());
           const org = {
             "@type": "Organization",
-            "name": name,
-            "url": url || undefined
+            name: name || "",
+            ...(url ? { url } : {})
           };
           if (country) {
-            org.address = { "@type": "PostalAddress", "addressCountry": country };
+            org.address = {
+              "@type": "PostalAddress",
+              addressCountry: country
+            };
           }
           if (rawId) {
             org.identifier = rawId;
-            if (rawId.startsWith("ROR:")) {
+            if (String(rawId).startsWith("ROR:")) {
               org.sameAs = formatRorUrl(rawId);
             }
           }
           if (resp) {
-            org.disambiguatingDescription = `Responsibility: ${resp}`;
+            org.disambiguatingDescription = "Responsibility: " + resp;
           }
           return org;
         });
 
-      // Parse Funders (v4.0) -> schema:funder (Organization[])
-      const funders = document.getElementById("catFunders").value
-        .split("\n")
+      const funders = (document.getElementById("catFunders").value || "")
+        .split(/\r?\n/)
         .map(line => line.trim())
         .filter(Boolean)
         .map(line => {
           const [name, rawId] = line.split("|").map(s => s.trim());
           const funder = {
             "@type": "Organization",
-            "name": name
+            name: name || ""
           };
           if (rawId) {
             funder.identifier = rawId;
-            if (rawId.startsWith("ROR:")) {
+            if (String(rawId).startsWith("ROR:")) {
               funder.sameAs = formatRorUrl(rawId);
             }
           }
           return funder;
         });
 
-      // Parse Policies -> schema:publishingPrinciples (CreativeWork[])
-      const policies = document.getElementById("catPolicies").value
-        .split("\n")
+      const policies = (document.getElementById("catPolicies").value || "")
+        .split(/\r?\n/)
         .map(line => line.trim())
         .filter(Boolean)
         .map(line => {
           const [name, url] = line.split("|").map(s => s.trim());
           return {
             "@type": "CreativeWork",
-            "name": name || "Policy",
-            "url": url || undefined
+            name: name || "Policy",
+            ...(url ? { url } : {})
           };
         });
 
-      // Parse Contacts -> schema:contactPoint (ContactPoint[])
-      const contactPoints = splitCsv("catContacts").map(c => {
-        const isEmail = c.includes("@") && !c.startsWith("http");
+      const contactPoints = splitCsv("catContacts").map(value => {
+        const isEmail = value.includes("@") && !value.startsWith("http");
         return {
           "@type": "ContactPoint",
-          "email": isEmail ? c : undefined,
-          "url": !isEmail ? c : undefined,
-          "contactType": "customer support"
+          ...(isEmail ? { email: value } : { url: value }),
+          contactType: "customer support"
         };
       });
 
-      // Parse APIs & Syndications -> schema:distribution (DataDownload[])
-      const distributions = document.getElementById("catApis").value
-        .split("\n")
+      const distributions = (document.getElementById("catApis").value || "")
+        .split(/\r?\n/)
         .map(line => line.trim())
         .filter(Boolean)
         .map(line => {
           const [apiType, contentUrl] = line.split("|").map(s => s.trim());
           return {
             "@type": "DataDownload",
-            "name": `${apiType} Endpoint`,
-            "encodingFormat": apiType,
-            "contentUrl": contentUrl
+            name: apiType ? `${apiType} Endpoint` : "API Endpoint",
+            ...(apiType ? { encodingFormat: apiType } : {}),
+            ...(contentUrl ? { contentUrl } : {})
           };
         });
 
-      // Parse Related Repositories (v4.0) -> schema:isPartOf (DataCatalog[])
-      const relatedRepos = document.getElementById("catRelatedRepos").value
-        .split("\n")
+      const relatedRepos = (document.getElementById("catRelatedRepos").value || "")
+        .split(/\r?\n/)
         .map(line => line.trim())
         .filter(Boolean)
         .map(line => {
           const [name, rawId] = line.split("|").map(s => s.trim());
           const rel = {
             "@type": "DataCatalog",
-            "name": name
+            name: name || ""
           };
           if (rawId) {
             rel.identifier = rawId;
-            if (rawId.startsWith("r3d")) {
+            if (String(rawId).startsWith("r3d")) {
               rel["@id"] = formatRe3dataUrl(rawId);
               rel.url = formatRe3dataUrl(rawId);
-            } else if (rawId.startsWith("http")) {
+            } else if (String(rawId).startsWith("http")) {
               rel.url = rawId;
             }
           }
           return rel;
         });
-      // Build additionalProperty array for re3data-specific technical metadata
+
       const additionalProps = [];
+
       const pidSystems = document.getElementById("catPidSystems").value.trim();
       if (pidSystems) {
-        additionalProps.push({ "@type": "PropertyValue", "propertyID": "pidSystem", "name": "Persistent Identifier System", "value": pidSystems });
-      }
-      const aidSystems = document.getElementById("catAidSystems").value.trim();
-      if (aidSystems) {
-        additionalProps.push({ "@type": "PropertyValue", "propertyID": "aidSystem", "name": "Author Identifier System", "value": aidSystems });
-      }
-      const software = document.getElementById("catSoftware").value.trim();
-      if (software) {
-        additionalProps.push({ "@type": "PropertyValue", "propertyID": "software", "name": "Repository Software", "value": software });
-      }
-      const certificates = document.getElementById("catCertificates").value.trim();
-      if (certificates) {
-        additionalProps.push({ "@type": "PropertyValue", "propertyID": "certificate", "name": "Repository Certificate", "value": certificates });
-      }
-      const qualityMeasures = document.getElementById("catQualityMeasures").value.trim();
-      if (qualityMeasures) {
-        additionalProps.push({ "@type": "PropertyValue", "propertyID": "qualityManagementMeasure", "name": "Quality Management Measure", "value": qualityMeasures });
-      }
-      const size = document.getElementById("catSize").value.trim();
-      if (size) {
-        additionalProps.push({ "@type": "PropertyValue", "propertyID": "size", "name": "Repository Size", "value": size });
-      }
-      const repoType = document.getElementById("catRepoType").value.trim();
-      if (repoType) {
-        additionalProps.push({ "@type": "PropertyValue", "propertyID": "repositoryType", "name": "Repository & Provider Type", "value": repoType });
+        additionalProps.push({
+          "@type": "PropertyValue",
+          propertyID: "pidSystem",
+          name: "Persistent Identifier System",
+          value: pidSystems
+        });
       }
 
-      document.getElementById("catStandards").value
-        .split("\n")
+      const aidSystems = document.getElementById("catAidSystems").value.trim();
+      if (aidSystems) {
+        additionalProps.push({
+          "@type": "PropertyValue",
+          propertyID: "aidSystem",
+          name: "Author Identifier System",
+          value: aidSystems
+        });
+      }
+
+      const software = document.getElementById("catSoftware").value.trim();
+      if (software) {
+        additionalProps.push({
+          "@type": "PropertyValue",
+          propertyID: "software",
+          name: "Repository Software",
+          value: software
+        });
+      }
+
+      const certificates = document.getElementById("catCertificates").value.trim();
+      if (certificates) {
+        additionalProps.push({
+          "@type": "PropertyValue",
+          propertyID: "certificate",
+          name: "Repository Certificate",
+          value: certificates
+        });
+      }
+
+      const qualityMeasures = document.getElementById("catQualityMeasures").value.trim();
+      if (qualityMeasures) {
+        additionalProps.push({
+          "@type": "PropertyValue",
+          propertyID: "qualityManagementMeasure",
+          name: "Quality Management Measure",
+          value: qualityMeasures
+        });
+      }
+
+      const size = document.getElementById("catSize").value.trim();
+      if (size) {
+        additionalProps.push({
+          "@type": "PropertyValue",
+          propertyID: "size",
+          name: "Repository Size",
+          value: size
+        });
+      }
+
+      const repoTypeValue = document.getElementById("catRepoType").value.trim();
+      if (repoTypeValue) {
+        additionalProps.push({
+          "@type": "PropertyValue",
+          propertyID: "repositoryType",
+          name: "Repository & Provider Type",
+          value: repoTypeValue
+        });
+      }
+
+      (document.getElementById("catStandards").value || "")
+        .split(/\r?\n/)
         .map(line => line.trim())
         .filter(Boolean)
         .forEach(line => {
           const [stdName, stdUrl] = line.split("|").map(s => s.trim());
           additionalProps.push({
             "@type": "PropertyValue",
-            "propertyID": "metadataStandard",
-            "name": stdName,
-            "value": stdUrl || stdName
+            propertyID: "metadataStandard",
+            name: stdName || "Metadata Standard",
+            value: stdUrl || stdName || ""
           });
         });
 
-      // Assemble Identifiers (re3data ID + v4.0 repositoryIdentifier)
       const r3dId = document.getElementById("r3dIdentifier").value.trim();
       const extraIds = splitCsv("catExtraIds");
       const identifierList = [];
@@ -774,9 +854,9 @@ ADP was CTS certified until 2025-03-07.</r3d:remarks>
       if (r3dId) {
         identifierList.push({
           "@type": "PropertyValue",
-          "propertyID": "re3data",
-          "value": r3dId,
-          "url": formatRe3dataUrl(r3dId)
+          propertyID: "re3data",
+          value: r3dId,
+          url: formatRe3dataUrl(r3dId)
         });
       }
 
@@ -784,11 +864,11 @@ ADP was CTS certified until 2025-03-07.</r3d:remarks>
         if (id.includes(":")) {
           const splitIndex = id.indexOf(":");
           const prefix = id.slice(0, splitIndex).trim();
-          const val = id.slice(splitIndex + 1).trim();
+          const value = id.slice(splitIndex + 1).trim();
           identifierList.push({
             "@type": "PropertyValue",
-            "propertyID": prefix,
-            "value": val
+            propertyID: prefix,
+            value: value
           });
         } else {
           identifierList.push(id);
@@ -796,68 +876,92 @@ ADP was CTS certified until 2025-03-07.</r3d:remarks>
       });
 
       const remarks = document.getElementById("catRemarks").value.trim();
-      const singleOrArray = arr => (arr.length === 0 ? undefined : (arr.length === 1 ? arr.at(0) : arr));
 
       const jsonLd = {
         "@context": "https://schema.org",
         "@type": "DataCatalog",
         "@id": document.getElementById("catId").value.trim() || undefined,
-        "identifier": singleOrArray(identifierList),
-        "name": document.getElementById("catName").value.trim(),
-        "alternateName": singleOrArray(altNames),
-        "url": document.getElementById("catUrl").value.trim(),
-        "description": document.getElementById("catDesc").value.trim(),
-        "datePublished": document.getElementById("catDatePublished").value || undefined,
-        "dateModified": document.getElementById("catDateModified").value || undefined,
-        "inLanguage": singleOrArray(langs),
-        "about": about.length ? about : undefined,
-        "keywords": keywords.length ? keywords : undefined,
-        "encodingFormat": contentTypes.length ? contentTypes : undefined,
-        "license": singleOrArray(licenses),
-        "isAccessibleForFree": accessTypes.some(a => a.includes("open")) ? true : undefined,
-        "conditionsOfAccess": accessTypes.length ? accessTypes.join(", ") : undefined,
-        "publishingPrinciples": policies.length ? policies : undefined,
-        "provider": singleOrArray(providers),
-        "funder": singleOrArray(funders),
-        "contactPoint": contactPoints.length ? contactPoints : undefined,
-        "distribution": distributions.length ? distributions : undefined,
-        "isPartOf": singleOrArray(relatedRepos),
-        "additionalProperty": additionalProps.length ? additionalProps : undefined,
-        "comment": remarks || undefined
+        identifier: singleOrArray(identifierList),
+        name: document.getElementById("catName").value.trim() || undefined,
+        alternateName: singleOrArray(altNames),
+        url: document.getElementById("catUrl").value.trim() || undefined,
+        description: document.getElementById("catDesc").value.trim() || undefined,
+        datePublished: document.getElementById("catDatePublished").value || undefined,
+        dateModified: document.getElementById("catDateModified").value || undefined,
+        inLanguage: singleOrArray(langs),
+        about: about.length ? about : undefined,
+        keywords: keywords.length ? keywords : undefined,
+        encodingFormat: contentTypes.length ? contentTypes : undefined,
+        license: singleOrArray(licenses),
+        isAccessibleForFree: accessTypes.some(a => String(a).toLowerCase().includes("open")) ? true : undefined,
+        conditionsOfAccess: accessTypes.length ? accessTypes.join(", ") : undefined,
+        publishingPrinciples: policies.length ? policies : undefined,
+        provider: singleOrArray(providers),
+        funder: singleOrArray(funders),
+        contactPoint: contactPoints.length ? contactPoints : undefined,
+        distribution: distributions.length ? distributions : undefined,
+        isPartOf: singleOrArray(relatedRepos),
+        additionalProperty: additionalProps.length ? additionalProps : undefined,
+        comment: remarks || undefined
       };
 
-
       const formattedJson = JSON.stringify(jsonLd, null, 2);
-      const embedSnippet = `<script type="application/ld+json">\n${formattedJson}\n<\/script>`;
+      const snippet = `<script type="application/ld+json">\\n${formattedJson}\\n<\\/script>`;
 
-      document.getElementById("jsonLdOutput").value = embedSnippet;
+      document.getElementById("jsonLdOutput").value = snippet;
 
-      // Live-embed into current document <head>
-      let existingTag = document.getElementById("dynamic-datacatalog-jsonld");
-      if (!existingTag) {
-        existingTag = document.createElement("script");
-        existingTag.id = "dynamic-datacatalog-jsonld";
-        existingTag.type = "application/ld+json";
-        document.head.appendChild(existingTag);
+      const existingTag = document.getElementById("dynamic-datacatalog-jsonld");
+      if (existingTag) {
+        existingTag.textContent = formattedJson;
+      } else {
+        const scriptTag = document.createElement("script");
+        scriptTag.id = "dynamic-datacatalog-jsonld";
+        scriptTag.type = "application/ld+json";
+        scriptTag.textContent = formattedJson;
+        document.head.appendChild(scriptTag);
       }
-      existingTag.textContent = formattedJson;
     }
 
-    // Copy helper
     function copyJsonLd() {
       const output = document.getElementById("jsonLdOutput");
-      output.select();
-      navigator.clipboard.writeText(output.value).then(() => {
-        const fb = document.getElementById("copyFeedback");
-        fb.textContent = "Copied to clipboard!";
-        setTimeout(() => fb.textContent = "", 2500);
-      });
+      const feedback = document.getElementById("copyFeedback");
+
+      if (!output) return;
+
+      const text = output.value;
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+          feedback.textContent = "Copied to clipboard!";
+          setTimeout(() => { feedback.textContent = ""; }, 2500);
+        }).catch(() => {
+          fallbackCopy(text, feedback);
+        });
+      } else {
+        fallbackCopy(text, feedback);
+      }
     }
 
-    // Auto-regenerate JSON-LD whenever any editor input changes
-    document.getElementById("editorForm").addEventListener("input", generateJsonLd);
+    function fallbackCopy(text, feedback) {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      textarea.style.top = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand("copy");
+        feedback.textContent = "Copied to clipboard!";
+      } catch (e) {
+        feedback.textContent = "Copy failed. Select text manually.";
+      }
+      setTimeout(() => { feedback.textContent = ""; }, 2500);
+      document.body.removeChild(textarea);
+    }
 
-    // Initialize form with sample XML on load
+    document.getElementById("editorForm").addEventListener("input", generateJsonLd);
     window.addEventListener("DOMContentLoaded", parseXmlToForm);
   </script>
 </body>
