@@ -423,7 +423,7 @@ Please note that some datasets in this collection are restricted to University o
         getXmlText(repoNode, ["repositoryName", "repositoryNameValue", "name"]),
         getTextFromPath(repoNode, ["repositoryInfo", "repositoryName"])
       );
-      document.getElementByById("catAltName").value = getXmlAllText(repoNode, ["additionalName", "additionalNames", "alternateName", "alternativeName"]).join(", ");
+      document.getElementById("catAltName").value = getXmlAllText(repoNode, ["additionalName", "additionalNames", "alternateName", "alternativeName"]).join(", ");
       document.getElementById("catUrl").value = firstNonEmpty(
         getXmlText(repoNode, ["repositoryURL", "repositoryUrl", "url"]),
         getTextFromPath(repoNode, ["repositoryInfo", "repositoryUrl"])
