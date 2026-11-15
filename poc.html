@@ -37,7 +37,7 @@
 </head>
 <body>
   <h1>Convert re3data v4 metadata to DataCatalog JSON-LD</h1>
-  <p>Paste the complete re3data XML, parse it, review or edit the fields, then copy the generated JSON-LD. Repository identifiers are shown as separate type/value rows so identifiers such as DOI URLs are preserved without comma-splitting.</p>
+  <p>Paste complete re3data XML, parse it, review or edit the fields, then copy the generated JSON-LD. Repository identifiers are represented as separate type/value pairs so URL and DOI values are not split or lost.</p>
 
   <fieldset>
     <legend>1. Paste raw re3data XML</legend>
@@ -70,7 +70,7 @@
     <label for="catDesc">Description</label><textarea id="catDesc" rows="3"></textarea>
 
     <h3>Repository identifiers</h3>
-    <p class="hint">The re3data identifier is above. Add each other identifier separately. The type is used as the JSON-LD PropertyValue propertyID; the value is preserved as entered.</p>
+    <p class="hint">The re3data ID has its own field above. Each other identifier has a type and value. Parsed forms include the nested &lt;identifiers&gt; container and typed or plain &lt;repositoryIdentifier&gt; elements.</p>
     <div id="identifierRows" aria-live="polite"></div>
     <button type="button" id="addIdentifierButton">Add identifier</button>
 
@@ -147,21 +147,28 @@
     const byId = id => document.getElementById(id);
     const localName = node => (node.localName || node.nodeName.split(':').pop()).toLowerCase();
     const directChildren = (parent, name) => Array.from(parent?.children || []).filter(child => localName(child) === name.toLowerCase());
-    const directText = (parent, names) => {
+
+    function directText(parent, names) {
       for (const name of (Array.isArray(names) ? names : [names])) {
         const child = directChildren(parent, name)[0];
         if (child) return child.textContent.trim();
       }
       return '';
-    };
-    const descendants = (parent, name) => Array.from(parent?.getElementsByTagNameNS('*', name) || []);
-    const descendantText = (parent, names) => {
+    }
+
+    function descendants(parent, name) {
+      if (!parent) return [];
+      return Array.from(parent.getElementsByTagName('*')).filter(node => localName(node) === name.toLowerCase());
+    }
+
+    function descendantText(parent, names) {
       for (const name of (Array.isArray(names) ? names : [names])) {
         const found = descendants(parent, name)[0];
         if (found) return found.textContent.trim();
       }
       return '';
-    };
+    }
+
     const allText = (parent, name) => descendants(parent, name).map(node => node.textContent.trim()).filter(Boolean);
     const unique = values => [...new Set(values.map(value => String(value).trim()).filter(Boolean))];
     const csv = id => (byId(id).value || '').split(',').map(value => value.trim()).filter(Boolean);
@@ -175,6 +182,18 @@
     function formatRe3dataUrl(id) {
       const clean = String(id || '').trim().replace(/^\/+/, '');
       return clean ? `https://www.re3data.org/repository/${clean}` : '';
+    }
+
+    function normalizeIdentifierType(type) {
+      const clean = String(type || 'identifier').trim();
+      const aliases = {
+        re3data: 're3data',
+        're3data.orgidentifier': 're3data',
+        doi: 'doi',
+        ror: 'ROR',
+        fairsharing: 'FAIRsharing'
+      };
+      return aliases[clean.toLowerCase()] || clean;
     }
 
     function addIdentifierRow(type = '', value = '') {
@@ -213,7 +232,6 @@
       byId('identifierRows').appendChild(row);
       typeInput.addEventListener('input', generateJsonLd);
       valueInput.addEventListener('input', generateJsonLd);
-      return row;
     }
 
     function getIdentifierRows() {
@@ -225,46 +243,54 @@
         .filter(item => item.type && item.value);
     }
 
+    // Normalize all repository-level ID representations to [{type, value}, ...].
+    // Deliberately only inspects direct repository children for repositoryIdentifier,
+    // so institution identifiers cannot be accidentally included here.
     function parseRepositoryIdentifiers(repository) {
-      const parsed = { re3dataId: '', others: [] };
+      const identifiers = [];
       const seen = new Set();
-      const add = (type, value) => {
-        type = String(type || 'identifier').trim();
-        value = String(value || '').trim();
-        if (!value) return;
-        if (type.toLowerCase() === 're3data' || type.toLowerCase() === 're3data.orgidentifier') {
-          parsed.re3dataId ||= value;
+
+      function add(type, value) {
+        const cleanType = normalizeIdentifierType(type);
+        const cleanValue = String(value || '').trim();
+        if (!cleanValue) return;
+        const key = `${cleanType.toLowerCase()}\u0000${cleanValue}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        identifiers.push({ type: cleanType, value: cleanValue });
+      }
+
+      function parseIdentifierElement(element, fallbackType) {
+        const type = directText(element, ['repositoryIdentifierType', 'identifierType', 'type']) || fallbackType;
+        const value = directText(element, ['repositoryIdentifierValue', 'identifierValue', 'value']);
+        if (value) {
+          add(type, value);
           return;
         }
-        const key = `${type.toLowerCase()}\u0000${value}`;
-        if (!seen.has(key)) {
-          seen.add(key);
-          parsed.others.push({ type, value });
-        }
-      };
+        if (!element.children.length) add(type, element.textContent);
+      }
 
-      // Current nested identifier container: identifiers/re3data, identifiers/doi, etc.
+      // Container format: <identifiers><re3data>...</re3data><doi>...</doi></identifiers>
       for (const container of directChildren(repository, 'identifiers')) {
-        for (const element of Array.from(container.children || [])) {
-          const type = localName(element);
-          const value = element.textContent.trim();
-          if (type === 're3data' || type === 're3data.orgidentifier') parsed.re3dataId ||= value;
-          else add(type, value);
+        for (const item of Array.from(container.children || [])) {
+          const itemType = localName(item);
+          if (item.children.length) parseIdentifierElement(item, itemType);
+          else add(itemType, item.textContent);
         }
       }
 
-      // Legacy direct repository ID element.
-      parsed.re3dataId ||= directText(repository, ['re3data.orgIdentifier', 're3dataIdentifier']);
+      // Legacy direct re3data ID element.
+      for (const name of ['re3data.orgIdentifier', 're3dataIdentifier']) {
+        for (const element of directChildren(repository, name)) add('re3data', element.textContent);
+      }
 
-      // One or more typed repositoryIdentifier elements, or legacy text values.
+      // Typed v4 repository identifiers, or a legacy text form such as TYPE:value.
       for (const element of directChildren(repository, 'repositoryIdentifier')) {
-        const type = directText(element, 'repositoryIdentifierType');
-        const value = directText(element, 'repositoryIdentifierValue');
+        const type = directText(element, ['repositoryIdentifierType', 'identifierType', 'type']);
+        const value = directText(element, ['repositoryIdentifierValue', 'identifierValue', 'value']);
         if (value) {
           add(type || 'repositoryIdentifier', value);
-          continue;
-        }
-        if (element.children.length === 0) {
+        } else if (!element.children.length) {
           const raw = element.textContent.trim();
           const colon = raw.indexOf(':');
           if (colon > 0) add(raw.slice(0, colon), raw.slice(colon + 1));
@@ -272,13 +298,14 @@
         }
       }
 
-      return parsed;
+      return identifiers;
     }
 
     function setIdentifierRows(items) {
       byId('identifierRows').replaceChildren();
-      items.forEach(item => addIdentifierRow(item.type, item.value));
-      if (!items.length) addIdentifierRow();
+      items.filter(item => item.type.toLowerCase() !== 're3data')
+        .forEach(item => addIdentifierRow(item.type, item.value));
+      if (!byId('identifierRows').children.length) addIdentifierRow();
     }
 
     function parseXmlToForm() {
@@ -292,11 +319,14 @@
         byId('parseFeedback').textContent = 'Could not parse XML. Check that the complete XML document was pasted.';
         return;
       }
+
       const repository = descendants(doc.documentElement, 'repository')[0] || doc.documentElement;
       const identifiers = parseRepositoryIdentifiers(repository);
-      byId('r3dIdentifier').value = identifiers.re3dataId;
-      byId('catId').value = formatRe3dataUrl(identifiers.re3dataId);
-      setIdentifierRows(identifiers.others);
+      const re3dataIdentifier = identifiers.find(item => item.type.toLowerCase() === 're3data');
+      const re3dataId = re3dataIdentifier?.value || '';
+      byId('r3dIdentifier').value = re3dataId;
+      byId('catId').value = formatRe3dataUrl(re3dataId);
+      setIdentifierRows(identifiers);
 
       byId('catName').value = directText(repository, 'repositoryName') || descendantText(repository, 'repositoryName');
       byId('catAltName').value = allText(repository, 'additionalName').join(', ');
@@ -321,7 +351,7 @@
         const url = directText(inst, ['institutionURL', 'institutionUrl']);
         const country = directText(inst, 'institutionCountry');
         const idNode = directChildren(inst, 'institutionIdentifier')[0];
-        const id = idNode ? (directText(idNode, 'institutionIdentifierUrl') || directText(idNode, 'institutionIdentifierValue') || idNode.textContent.trim()) : '';
+        const id = idNode ? (directText(idNode, ['institutionIdentifierUrl', 'institutionIdentifierValue']) || idNode.textContent.trim()) : '';
         const responsibility = allText(inst, 'responsibilityType').join(', ');
         return [name, url, country, id, responsibility].join(' | ');
       }).join('\n');
@@ -353,11 +383,13 @@
       });
       byId('catPolicies').value = policyLines.join('\n');
 
-      byId('catContacts').value = unique(allText(repository, 'repositoryContact').map((_, index) => {
-        const contact = descendants(repository, 'repositoryContact')[index];
-        return directText(contact, 'repositoryContactInformation') || contact.textContent.trim();
-      })).join(', ');
-      byId('catSoftware').value = unique([...allText(repository, 'softwareName'), ...directChildren(repository, 'software').map(node => node.textContent.trim())]).join(', ');
+      byId('catContacts').value = unique(descendants(repository, 'repositoryContact').map(contact =>
+        directText(contact, 'repositoryContactInformation') || contact.textContent.trim()
+      )).join(', ');
+      byId('catSoftware').value = unique([
+        ...allText(repository, 'softwareName'),
+        ...directChildren(repository, 'software').map(node => directText(node, 'softwareName') || node.textContent.trim())
+      ]).join(', ');
 
       const apiLines = descendants(repository, 'api').map(api => {
         const type = api.getAttribute('apiType') || directText(api, 'apiType') || 'API';
@@ -386,7 +418,9 @@
       byId('catSize').value = directText(repository, 'size');
       byId('catRepoType').value = unique([...allText(repository, 'type'), ...allText(repository, 'providerType')]).join(', ');
       byId('catRemarks').value = directText(repository, 'remarks');
-      byId('parseFeedback').textContent = identifiers.re3dataId ? 'XML parsed. Review the fields and identifiers below.' : 'XML parsed, but no re3data identifier was found; other fields may still be available.';
+      byId('parseFeedback').textContent = re3dataId
+        ? `XML parsed. Found ${identifiers.length} repository identifier(s); review the fields below.`
+        : `XML parsed, but no re3data identifier was found. Found ${identifiers.length} other identifier(s).`;
       generateJsonLd();
     }
 
