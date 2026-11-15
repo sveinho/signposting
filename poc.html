@@ -515,7 +515,7 @@
 
       const repoNode = getXmlElements(xmlDoc.documentElement, "repository")[0] || xmlDoc.documentElement;
 
-      const r3dId = getXmlText(repoNode, "re3data.orgIdentifier");
+      const r3dId = getXmlText(repoNode, "r3d:doi");
       const repoName = getXmlText(repoNode, "repositoryName");
       const repoUrl = getXmlText(repoNode, "repositoryURL");
       const repoDescription = getXmlText(repoNode, "description");
