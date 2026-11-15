@@ -34,7 +34,12 @@
   <fieldset>
     <legend>1. Paste Raw re3data v4 XML</legend>
     <label for="xmlInput">Paste the Raw re3data v4 XML here - replace the example:</label>
-    <textarea id="xmlInput" rows="14"></textarea>
+    <textarea id="xmlInput" rows="14"><?xml version="1.0" encoding="UTF-8"?>
+<note>
+  <to>Users</to>
+  <heading>Reminder</heading>
+  <body>Replace this text with your repository record</body>
+</note></textarea>
     <button type="button" onclick="parseXmlToForm()">Parse XML into Editor</button>
   </fieldset>
 
