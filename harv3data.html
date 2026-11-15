@@ -198,7 +198,13 @@
 
     // 2. Parse XML into Form Fields
     function parseXmlToForm() {
-      const xmlString = document.getElementById("xmlInput").value;
+      const pastedXml = document.getElementById("xmlInput").value
+  .replace(/^\uFEFF/, "")
+  .trim();
+
+const xmlString = pastedXml.startsWith("<?xml")
+  ? pastedXml
+  : `<?xml version="1.0" encoding="UTF-8"?>\n${pastedXml}`;
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(xmlString, "application/xml");
 
